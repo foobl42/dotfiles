@@ -65,19 +65,8 @@ fi
 
 [[ -r "$encr_file" ]] || abort "The encrypted file was not found."
 
-for cmd in chezmoi mktemp; do
-    command -v "$cmd" >/dev/null 2>&1 \
-        || abort "The \"$cmd\" command was not found."
-done
-
-temp_config_file=$(mktemp) || abort "Failed to create the temp config file."
-trap 'rm -f "$temp_config_file"' EXIT INT TERM HUP
-
-{
-    printf 'useBuiltinAge: true\n'
-    printf 'warnings:\n'
-    printf '  configFileTemplateHasChanged: false\n'
-} > "$temp_config_file" || abort "Failed to write to the temp config file."
+command -v chezmoi >/dev/null 2>&1 \
+    || abort "The \"chezmoi\" command was not found."
 
 mkdir -p "$conf_dir" || abort "Failed to create the directory \"$conf_dir\"."
 chmod 700 "$conf_dir" || abort "Failed to set the permissions on \"$conf_dir\"."
@@ -92,9 +81,8 @@ fi
 
 decrypt_with_passphrase() {
     local passphrase="$1"
-    echo "$passphrase" | chezmoi age decrypt --config "$temp_config_file" \
-        --config-format yaml --no-tty --passphrase --output "$ident_file" \
-        "$encr_file" >/dev/null 2>&1 \
+    echo "$passphrase" | chezmoi age decrypt --no-tty --passphrase \
+        --output="$ident_file" "$encr_file" >/dev/null 2>&1 \
             || abort "Failed to restore the identity file."
 }
 
