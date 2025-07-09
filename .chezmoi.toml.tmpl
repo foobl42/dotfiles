@@ -2,8 +2,8 @@
 {{- $configDir := .chezmoi.configFile | dir -}}
 {{- $identityFile := joinPath $configDir "chezmoi.key" -}}
 {{- $hasIdentityFile := not (empty (stat $identityFile)) -}}
-{{- $publicKey := .chezmoi.config.age.recipient -}}
-{{- if and (empty $publicKey) $hasIdentityFile -}}
+{{- $publicKey := "" -}}
+{{- if $hasIdentityFile -}}
 {{-   $publicKey = output (joinPath $supportScriptsDir "extract-age-public-key.bash") -}}
 {{- end -}}
 {{- $hasPublicKey := not (empty $publicKey) -}}
