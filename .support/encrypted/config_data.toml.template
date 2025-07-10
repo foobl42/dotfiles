@@ -1,0 +1,27 @@
+# Note: This template (config_data.toml.template) shows the structure of this
+# TOML file as expected within the unencrypted config data file
+# (config_data.toml). This file is for illustrative purposes only.
+# ------------------------------------------------------------------------------
+
+# Note: This file (config_data.toml) is overwritten whenever decrypted by
+# Chezmoi. You should manually update the encrypted file (config_data.toml.age)
+# with any changes made here. The commands to use are:
+#   cd $(chezmoi source-path)/.support/encrypted
+#   chezmoi encrypt --output config_data.toml.age config_data.toml
+
+[hosts]
+
+[hosts.<<hostname>>]
+displayName = "<<displayName>>"
+isHeadless = <<true|false>>
+isPersonal = <<true|false>>
+isVirtual = <<true|false>>
+
+[host.<<hostname>>.fqdn]
+local = "<<hostname>>.local"
+vpn = "<<vpnFqdn>>"
+
+[host.<<hostname>>.users]
+admin = "<<adminUsername>>"
+personal = "<<personalUsername>>"
+others = [ "<<otherUsername>>" ]

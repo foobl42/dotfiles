@@ -1,4 +1,5 @@
 {{- $supportDir := joinPath .chezmoi.sourceDir ".support" -}}
+{{- $encrDir := joinPath $supportDir "encrypted" -}}
 {{- $scriptsDir := joinPath $supportDir "scripts" -}}
 {{- $configDir := dir .chezmoi.configFile -}}
 {{- $identityFile := joinPath $configDir "chezmoi.key" -}}
@@ -9,6 +10,16 @@
         (joinPath $scriptsDir "extract-age-public-key.bash") -}}
 {{- end -}}
 {{- $hasPublicKey := not (empty $publicKey) -}}
+{{- $configData := "" -}}
+{{- if includeTemplate "is_encryption_enabled" . -}}
+{{-   $configData = joinPath $encrDir "config_data.toml.age" | include | decrypt
+        | fromToml -}}
+{{- end -}}
+{{- $hasConfigData := not (empty $configData) -}}
+{{- $thisHost := "" -}}
+{{- if $hasConfigData -}}
+{{-   $thisHost = get $configData.hosts .chezmoi.hostname -}}
+{{- end -}}
 
 {{- if and $hasIdentityFile $hasPublicKey -}}
 encryption = "age"
@@ -22,6 +33,25 @@ use-builtin-git = true
 identity = "{{ $identityFile }}"
 recipient = "{{ $publicKey }}"
 {{- end  }}
+
+[data]
+[data.flags]
+{{- if $hasConfigData  }}
+isAdminUser = {{ eq $thisHost.users.admin .chezmoi.username }}
+isHeadless = {{ $thisHost.isHeadless }}
+{{- end  }}
+isLinuxOS = {{ eq .chezmoi.os "linux" }}
+isMacOS = {{ eq .chezmoi.os "darwin" }}
+{{- if $hasConfigData  }}
+isOtherHost = {{ not $thisHost.isPersonal }}
+isOtherUser = {{ and
+  (not (eq $thisHost.users.admin .chezmoi.username))
+  (not (eq $thisHost.users.personal .chezmoi.username)) }}
+isPersonalHost = {{ $thisHost.isPersonal }}
+isPersonalUser = {{ eq $thisHost.users.personal .chezmoi.username }}
+isVirtual = {{ $thisHost.isVirtual }}
+{{- end  }}
+isWindowsOS = {{ eq .chezmoi.os "windows" }}
 
 [hooks.init.pre]
 command = "{{ joinPath $scriptsDir "restore-age-identity-file.bash" }}"
