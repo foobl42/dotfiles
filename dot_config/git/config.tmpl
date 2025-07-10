@@ -1,0 +1,39 @@
+{{- if and .flags.isPersonalHost .flags.isPersonalUser -}}
+[commit]
+    gpgsign = true
+
+[core]
+    pager = delta
+
+[delta]
+    navigate = true
+    side-by-side = true
+    true-color = always
+
+[filter "lfs"]
+    required = true
+    clean = git-lfs clean -- %f
+    smudge = git-lfs smudge -- %f
+    process = git-lfs filter-process
+
+{{  end -}}
+
+[gpg]
+    format = ssh
+
+[gpg "ssh"]
+    allowedSignersFile = ~/.ssh/allowed_signers
+
+{{- if and .flags.isPersonalHost .flags.isPersonalUser  }}
+
+[interactive]
+    diffFilter = delta --color-only
+
+[merge]
+    conflictstyle = zdiff3
+
+[user]
+    email = {{ .git.email }}
+    name = {{ .git.name }}
+    signingkey = ~/.ssh/id_ed25519.pub
+{{  end -}}

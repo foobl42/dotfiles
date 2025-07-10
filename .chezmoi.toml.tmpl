@@ -53,6 +53,18 @@ isVirtual = {{ $thisHost.isVirtual }}
 {{- end  }}
 isWindowsOS = {{ eq .chezmoi.os "windows" }}
 
+{{- if and $hasConfigData (eq $thisHost.users.personal .chezmoi.username)  }}
+
+[data.git]
+email = "3698140+foobl42@users.noreply.github.com"
+name = "Lee DeLapp"
+
+[data.github]
+name = "Lee DeLapp"
+repo = "dotfiles"
+user = "foobl42"
+{{- end  }}
+
 [hooks.init.pre]
 command = "{{ joinPath $scriptsDir "restore-age-identity-file.bash" }}"
 
