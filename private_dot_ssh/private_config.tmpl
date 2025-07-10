@@ -1,0 +1,20 @@
+{{- if and .flags.isPersonalHost .flags.isPersonalUser -}}
+Include ~/.orbstack/ssh/config
+
+{{  end -}}
+
+Match host github.com
+    RequestTTY no
+    User git
+
+{{- if and .flags.isPersonalHost .flags.isPersonalUser  }}
+
+Match host *.local
+    ForwardAgent yes
+
+Match all
+    AddKeysToAgent yes
+{{- if .flags.isMacOS  }}
+    UseKeychain yes
+{{- end  }}
+{{  end -}}
