@@ -63,13 +63,17 @@ if [[ -r "$ident_file" && -r "$ident_file_sum" && \
         || abort "Failed to remove the outdated identity file or checksums."
 fi
 
-[[ -r "$encr_file" ]] || abort "The encrypted file was not found."
+[[ -r "$encr_file" ]] \
+    || abort "The encrypted file was not found."
 
 command -v chezmoi >/dev/null 2>&1 \
     || abort "The \"chezmoi\" command was not found."
 
-mkdir -p "$conf_dir" || abort "Failed to create the directory \"$conf_dir\"."
-chmod 700 "$conf_dir" || abort "Failed to set the permissions on \"$conf_dir\"."
+mkdir -p "$conf_dir" \
+    || abort "Failed to create the directory \"$conf_dir\"."
+
+chmod 700 "$conf_dir" \
+    || abort "Failed to set the permissions on \"$conf_dir\"."
 
 # Handle passphrase: stdin, AGE_PASSPHRASE, or custom prompt
 passphrase=""
@@ -103,11 +107,12 @@ fi
 chmod 600 "$ident_file" \
     || abort "Failed to set the permissions on \"$(basename $ident_file)\"."
 
- # Save checksums
 checksum "$encr_file" > "$encr_file_sum" \
     || abort "Failed to save the encrypted file checksum."
+
 checksum "$ident_file" > "$ident_file_sum" \
     || abort "Failed to save the identity file checksum."
+
 chmod 600 "$encr_file_sum" "$ident_file_sum" \
     || abort "Failed to set permissions on the checksums."
 

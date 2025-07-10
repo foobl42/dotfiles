@@ -1,0 +1,49 @@
+{{- /*
+
+# NOTE: This script evaluates the various parts of the existing encryption
+# configuration. When it finds a discrepancy, it calls "chezmoi init" and exits.
+# The call to the init command will ensure that the encryption is properly
+# configured and enabled. This script ensures that the init command is called
+# whenever it is needed. This allows for "healing" of the encryption config
+# should any of it gets disabled, modified, or erased.
+
+# HACK: Calling the init command here while apply command is already running
+# will cause a "timeout obtaining persistent state lock" error. We aren't really
+# needing to modify persistent state here, but rather we simply want to call
+# init so that it can (re-)build our config file. To work around this we are
+# pointing persistent state to a temporary file for the init call (if called).
+
+*/ -}}
+
+{{- define "call_init_script" -}}
+#!/bin/bash
+
+set -eufo pipefail
+
+temp_file="$(mktemp)"
+trap 'rm -f "$temp_file"' EXIT INT TERM HUP
+chezmoi init --persistent-state="$temp_file"
+{{  end -}}
+
+{{- $identityFile := joinPath (dir .chezmoi.configFile) "chezmoi.key" -}}
+{{- if or
+      (empty (stat .chezmoi.configFile))
+      (empty (stat $identityFile)) -}}
+{{-   template "call_init_script" -}}
+{{- else -}}
+{{-   $config := include .chezmoi.configFile | fromToml -}}
+{{-   $encryptionValue := $config | jq ".encryption" | mustFirst -}}
+{{-   $identityValue := $config | jq ".age.identity" | mustFirst -}}
+{{-   $recipientValue := $config | jq ".age.recipient" | mustFirst -}}
+{{-   $identity := include $identityFile -}}
+{{-   if or
+        (empty $encryptionValue)
+        (ne $encryptionValue "age")
+        (empty $identityValue)
+        (ne $identityValue $identityFile)
+        (empty $recipientValue)
+        (not (contains $recipientValue $identity))
+        (not (contains "AGE-SECRET-KEY" $identity)) -}}
+{{-     template "call_init_script" -}}
+{{-   end -}}
+{{- end -}}

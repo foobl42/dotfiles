@@ -42,16 +42,17 @@ checksum() {
     esac
 }
 
-# Error if the checksum for the identity file does not match
-if [[ -r "$ident_file" && -r "$ident_file_sum" ]]; then
-    if [[ "$(checksum "$ident_file")" != "$(cat "$ident_file_sum")" ]]; then
-        abort "The identity file checksum does not match."
-    fi
-fi
+[[ -r "$ident_file" ]] \
+    || abort "The identity file was not found."
 
-[[ -r "$ident_file" ]] || abort "The identity file was not found."
+[[ -r "$ident_file_sum" ]] \
+    || abort "The identity checksum file was not found."
 
-command -v awk >/dev/null 2>&1 || abort "The \"awk\" command was not found."
+[[ "$(checksum "$ident_file")" == "$(cat "$ident_file_sum")" ]] \
+    || abort "The identity file checksums do not match."
+
+command -v awk >/dev/null 2>&1 \
+    || abort "The \"awk\" command was not found."
 
 awk "/public key/ {printf \$4}" $ident_file \
     || abort "Failed to extract the public key."

@@ -1,10 +1,12 @@
-{{- $supportScriptsDir := joinPath .chezmoi.sourceDir ".support" "scripts" -}}
-{{- $configDir := .chezmoi.configFile | dir -}}
+{{- $supportDir := joinPath .chezmoi.sourceDir ".support" -}}
+{{- $scriptsDir := joinPath $supportDir "scripts" -}}
+{{- $configDir := dir .chezmoi.configFile -}}
 {{- $identityFile := joinPath $configDir "chezmoi.key" -}}
 {{- $hasIdentityFile := not (empty (stat $identityFile)) -}}
 {{- $publicKey := "" -}}
 {{- if $hasIdentityFile -}}
-{{-   $publicKey = output (joinPath $supportScriptsDir "extract-age-public-key.bash") -}}
+{{-   $publicKey = output
+        (joinPath $scriptsDir "extract-age-public-key.bash") -}}
 {{- end -}}
 {{- $hasPublicKey := not (empty $publicKey) -}}
 
@@ -22,7 +24,7 @@ recipient = "{{ $publicKey }}"
 {{- end  }}
 
 [hooks.init.pre]
-command = "{{ joinPath $supportScriptsDir "chezmoi-init-pre-hook.bash" }}"
+command = "{{ joinPath $scriptsDir "restore-age-identity-file.bash" }}"
 
 [update]
 apply = false
