@@ -7,7 +7,7 @@
 {{- $publicKey := "" -}}
 {{- if $hasIdentityFile -}}
 {{-   $publicKey = output
-        (joinPath $scriptsDir "extract-age-public-key.bash") -}}
+        (joinPath $scriptsDir "extract-age-public-key") -}}
 {{- end -}}
 {{- $hasPublicKey := not (empty $publicKey) -}}
 {{- $configData := "" -}}
@@ -66,7 +66,7 @@ user = "foobl42"
 {{- end  }}
 
 [hooks.init.pre]
-command = "{{ joinPath $scriptsDir "restore-age-identity-file.bash" }}"
+command = "{{ joinPath $scriptsDir "restore-age-identity-file" }}"
 
 [update]
 apply = false
