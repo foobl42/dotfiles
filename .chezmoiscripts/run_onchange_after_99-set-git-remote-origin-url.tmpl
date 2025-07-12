@@ -1,0 +1,16 @@
+{{- /*
+
+# NOTE: This script simply sets the git remote origin url for the current user.
+# This script will either run or not based on the include/exclude logic found in
+# the .chezmoiignore file. By default, a user that uses init to download this
+# repo, will do so via https. Most users will not need to push changes. So for
+# those that need to push changes, this script should be ran.
+
+*/ -}}
+
+#!/bin/bash
+
+set -eufo pipefail
+
+git -C "{{ .chezmoi.workingTree }}" remote set-url origin \
+    git@github.com:{{ .github.user }}/{{ .github.repo }}.git
