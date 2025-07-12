@@ -1,0 +1,11 @@
+enter_accept = true
+exit_mode = "return-query"
+keymap_mode = "auto"
+show_preview = true
+store_failed = false
+style = "auto"
+
+[sync]
+records = true
+
+# vim: set filetype=toml:

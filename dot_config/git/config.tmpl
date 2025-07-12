@@ -1,4 +1,8 @@
-{{- if and .flags.isPersonalHost .flags.isPersonalUser -}}
+{{- if and
+      (hasKey .flags "isPersonalHost")
+      .flags.isPersonalHost
+      (hasKey .flags "isPersonalUser")
+      .flags.isPersonalUser -}}
 [commit]
     gpgsign = true
 
@@ -24,7 +28,11 @@
 [gpg "ssh"]
     allowedSignersFile = ~/.ssh/allowed_signers
 
-{{- if and .flags.isPersonalHost .flags.isPersonalUser  }}
+{{- if and
+      (hasKey .flags "isPersonalHost")
+      .flags.isPersonalHost
+      (hasKey .flags "isPersonalUser")
+      .flags.isPersonalUser  }}
 
 [interactive]
     diffFilter = delta --color-only

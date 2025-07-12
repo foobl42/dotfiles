@@ -1,4 +1,8 @@
-{{- if and .flags.isPersonalHost .flags.isPersonalUser -}}
+{{- if and
+      (hasKey .flags "isPersonalHost")
+      .flags.isPersonalHost
+      (hasKey .flags "isPersonalUser")
+      .flags.isPersonalUser -}}
 Include ~/.orbstack/ssh/config
 
 {{  end -}}
@@ -7,14 +11,20 @@ Match host github.com
     RequestTTY no
     User git
 
-{{- if and .flags.isPersonalHost .flags.isPersonalUser  }}
+{{- if and
+      (hasKey .flags "isPersonalHost")
+      .flags.isPersonalHost
+      (hasKey .flags "isPersonalUser")
+      .flags.isPersonalUser  }}
 
 Match host *.local
     ForwardAgent yes
 
 Match all
     AddKeysToAgent yes
-{{- if .flags.isMacOS  }}
+{{- if and
+      (hasKey .flags "isMacOS")
+      .flags.isMacOS  }}
     UseKeychain yes
 {{- end  }}
 {{  end -}}

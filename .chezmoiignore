@@ -17,26 +17,16 @@ README.md
 {{- end  }}
 
 {{- if and
-      (hasKey .flags "isMacOS")
-      (not .flags.isMacOS)  }}
-.bash_sessions_disable
+      (hasKey .flags "isHeadless")
+      .flags.isHeadless  }}
+.config/ghostty
+.config/ghostty/config.toml
 {{- end  }}
 
 {{- if and
-      (hasKey .flags "isPersonalUser")
-      (not .flags.isPersonalUser)  }}
-.chezmoiscripts/99-set-git-remote-origin-url
-.chezmoiscripts/99-update-fisher-plugins
-.config/fish/completions/fisher.fish
-.config/fish/conf.d/abbrs.fish
-.config/fish/fish_plugins
-.config/fish/functions/fisher.fish
-.ssh/authorized_keys
-.ssh/config
-.ssh/id_ed25519
-.ssh/id_ed25519.pub
-.ssh/known_hosts
-.ssh/known_hosts.old
+      (hasKey .flags "isMacOS")
+      (not .flags.isMacOS)  }}
+.bash_sessions_disable
 {{- end  }}
 
 {{- if and
@@ -45,4 +35,27 @@ README.md
 .chezmoiscripts/99-set-git-remote-origin-url
 .ssh/id_ed25519
 .ssh/id_ed25519.pub
+{{- end  }}
+
+{{- if and
+      (hasKey .flags "isPersonalUser")
+      (not .flags.isPersonalUser)  }}
+.chezmoiscripts/99-set-git-remote-origin-url
+.chezmoiscripts/99-update-fisher-plugins
+.config/atuin
+.config/atuin/config.toml
+.config/fish/completions/fisher.fish
+.config/fish/conf.d/abbrs.fish
+.config/fish/fish_plugins
+.config/fish/functions/fisher.fish
+.config/ghostty
+.config/ghostty/config
+.config/helix
+.config/helix/config.toml
+.ssh/authorized_keys
+.ssh/config
+.ssh/id_ed25519
+.ssh/id_ed25519.pub
+.ssh/known_hosts
+.ssh/known_hosts.old
 {{- end  }}

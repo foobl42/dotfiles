@@ -1,0 +1,11 @@
+auto-update = download
+background-blur = 20
+background-opacity = 0.96
+font-family = "0xProto Nerd Font Mono"
+font-size = 16
+macos-option-as-alt = true
+mouse-hide-while-typing = true
+theme = "Terminal Basic"
+window-height = 30
+window-inherit-working-directory = false
+window-width = 100
