@@ -1,11 +1,9 @@
 #!/bin/bash
 
-# NOTE: This script evaluates the various parts of the existing encryption
-# configuration. When it finds a discrepancy, it calls "chezmoi init" and exits.
-# The call to the init command will ensure that the encryption is properly
-# configured and enabled. This script ensures that the init command is called
-# whenever it is needed. This allows for "healing" of the encryption config
-# should any of it get disabled, modified, or erased.
+# NOTE: This script is ran strategically when it is helpful at the beginning of
+# a "chezmoi apply" to call "chezmoi init". This is done in order to not require
+# the user to have to run multiple init calls, when it is determined to be
+# needed. Yes, it is probably hacky.
 
 # HACK: Calling the init command here while apply command is already running
 # will cause a "timeout obtaining persistent state lock" error. We aren't really

@@ -5,9 +5,8 @@ README.md
 .bash_sessions_disable
 {{- end  }}
 
-{{- if includeTemplate "is_encryption_enabled" .  }}
-.chezmoiscripts/00-ensure-age-encryption-enabled
-{{- else  }}
+{{- if not (includeTemplate "is_encryption_enabled" .)  }}
+.chezmoiscripts/99-set-git-remote-origin-url
 .chezmoiscripts/99-update-fisher-plugins
 .config/atuin
 .config/atuin/config.toml
@@ -30,9 +29,9 @@ README.md
 {{- end  }}
 
 {{- if hasKey .flags "hasConfigData"  }}
-.chezmoiscripts/00-ensure-age-encryption-enabled
-.chezmoiscripts/01-ensure-config-data-restored
+.chezmoiscripts/00-ensure-chezmoi-config
 {{- else  }}
+.chezmoiscripts/99-set-git-remote-origin-url
 .chezmoiscripts/99-update-fisher-plugins
 .config/atuin
 .config/atuin/config.toml
