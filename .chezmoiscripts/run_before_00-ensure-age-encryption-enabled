@@ -1,4 +1,4 @@
-{{- /*
+#!/bin/bash
 
 # NOTE: This script evaluates the various parts of the existing encryption
 # configuration. When it finds a discrepancy, it calls "chezmoi init" and exits.
@@ -13,14 +13,8 @@
 # init so that it can (re-)build our config file. To work around this we are
 # pointing persistent state to a temporary file for the init call (if called).
 
-*/ -}}
-
-{{- if not (includeTemplate "is_encryption_enabled" .) -}}
-#!/bin/bash
-
 set -eufo pipefail
 
 temp_file="$(mktemp)"
 trap 'rm -f "$temp_file"' EXIT INT TERM HUP
 chezmoi init --persistent-state="$temp_file"
-{{  end -}}

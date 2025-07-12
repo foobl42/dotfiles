@@ -1,4 +1,4 @@
-{{- /*
+#!/bin/bash
 
 # NOTE: This script evaluates the availability of the config data. This
 # (sensitive) data relies on the encryption configuration being enabled in order
@@ -15,16 +15,8 @@
 # init so that it can (re-)build our config file. To work around this we are
 # pointing persistent state to a temporary file for the init call (if called).
 
-*/ -}}
-
-{{- if and
-      (includeTemplate "is_encryption_enabled" .)
-      (not (hasKey .flags "isPersonalHost")) -}}
-#!/bin/bash
-
 set -eufo pipefail
 
 temp_file="$(mktemp)"
 trap 'rm -f "$temp_file"' EXIT INT TERM HUP
 chezmoi init --persistent-state="$temp_file"
-{{  end -}}

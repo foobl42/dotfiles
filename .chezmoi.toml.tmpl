@@ -37,6 +37,7 @@ recipient = "{{ $publicKey }}"
 [data]
 [data.flags]
 {{- if $hasConfigData  }}
+hasConfigData = true
 isAdminUser = {{ eq $thisHost.users.admin .chezmoi.username }}
 isHeadless = {{ $thisHost.isHeadless }}
 {{- end  }}

@@ -1,6 +1,91 @@
 LICENSE
 README.md
 
+{{- if not .flags.isMacOS  }}
+.bash_sessions_disable
+{{- end  }}
+
+{{- if includeTemplate "is_encryption_enabled" .  }}
+.chezmoiscripts/00-ensure-age-encryption-enabled
+{{- else  }}
+.chezmoiscripts/99-update-fisher-plugins
+.config/atuin
+.config/atuin/config.toml
+.config/fish/completions/fisher.fish
+.config/fish/conf.d/abbrs.fish
+.config/fish/fish_plugins
+.config/fish/functions/fisher.fish
+.config/ghostty
+.config/ghostty/config
+.config/helix
+.config/helix/config.toml
+.config/vim/vimrc
+.ssh/allowed_signers
+.ssh/authorized_keys
+.ssh/config
+.ssh/id_ed25519
+.ssh/id_ed25519.pub
+.ssh/known_hosts
+.ssh/known_hosts.old
+{{- end  }}
+
+{{- if hasKey .flags "hasConfigData"  }}
+.chezmoiscripts/00-ensure-age-encryption-enabled
+.chezmoiscripts/01-ensure-config-data-restored
+{{- else  }}
+.chezmoiscripts/99-update-fisher-plugins
+.config/atuin
+.config/atuin/config.toml
+.config/fish/completions/fisher.fish
+.config/fish/conf.d/abbrs.fish
+.config/fish/fish_plugins
+.config/fish/functions/fisher.fish
+.config/ghostty
+.config/ghostty/config
+.config/helix
+.config/helix/config.toml
+.config/vim/vimrc
+.ssh/authorized_keys
+.ssh/config
+.ssh/id_ed25519
+.ssh/id_ed25519.pub
+.ssh/known_hosts
+.ssh/known_hosts.old
+{{- end  }}
+
+{{- if and (hasKey .flags "hasConfigData") .flags.isHeadless  }}
+.config/ghostty
+.config/ghostty/config
+{{- end  }}
+
+{{- if and (hasKey .flags "hasConfigData") (not .flags.isPersonalHost)  }}
+.chezmoiscripts/99-set-git-remote-origin-url
+.ssh/id_ed25519
+.ssh/id_ed25519.pub
+{{- end  }}
+
+{{- if and (hasKey .flags "hasConfigData") (not .flags.isPersonalUser)  }}
+.chezmoiscripts/99-set-git-remote-origin-url
+.chezmoiscripts/99-update-fisher-plugins
+.config/atuin
+.config/atuin/config.toml
+.config/fish/completions/fisher.fish
+.config/fish/conf.d/abbrs.fish
+.config/fish/fish_plugins
+.config/fish/functions/fisher.fish
+.config/ghostty
+.config/ghostty/config
+.config/helix
+.config/helix/config.toml
+.config/vim/vimrc
+.ssh/authorized_keys
+.ssh/config
+.ssh/id_ed25519
+.ssh/id_ed25519.pub
+.ssh/known_hosts
+.ssh/known_hosts.old
+{{- end  }}
+
 {{- if not (includeTemplate "is_command_reachable" "atuin")  }}
 .config/atuin
 .config/atuin/config.toml
@@ -14,13 +99,10 @@ README.md
 
 {{- if not (includeTemplate "is_command_reachable" "fish")  }}
 .chezmoiscripts/99-update-fisher-plugins
-.config/fish
-.config/fish/completions
 .config/fish/completions/fisher.fish
-.config/fish/conf.d
 .config/fish/conf.d/abbrs.fish
+.config/fish/config.fish
 .config/fish/fish_plugins
-.config/fish/functions
 .config/fish/functions/fisher.fish
 {{- end  }}
 
@@ -40,64 +122,11 @@ README.md
 {{- end  }}
 
 {{- if not (includeTemplate "is_command_reachable" "vim")  }}
-.config/vim
 .config/vim/vimrc
 {{- end  }}
 
 {{- if not (includeTemplate "is_command_reachable" "zsh")  }}
-.zshenv
-.config/zsh
 .config/zsh/.zprofile
 .config/zsh/.zshrc
-{{- end  }}
-
-{{- if not (includeTemplate "is_encryption_enabled" .)  }}
-.ssh/allowed_signers
-.ssh/authorized_keys
-.ssh/id_ed25519
-.ssh/id_ed25519.pub
-{{- end  }}
-
-{{- if and
-      (hasKey .flags "isHeadless")
-      .flags.isHeadless  }}
-.config/ghostty
-.config/ghostty/config.toml
-{{- end  }}
-
-{{- if and
-      (hasKey .flags "isMacOS")
-      (not .flags.isMacOS)  }}
-.bash_sessions_disable
-{{- end  }}
-
-{{- if and
-      (hasKey .flags "isPersonalHost")
-      (not .flags.isPersonalHost)  }}
-.chezmoiscripts/99-set-git-remote-origin-url
-.ssh/id_ed25519
-.ssh/id_ed25519.pub
-{{- end  }}
-
-{{- if and
-      (hasKey .flags "isPersonalUser")
-      (not .flags.isPersonalUser)  }}
-.chezmoiscripts/99-set-git-remote-origin-url
-.chezmoiscripts/99-update-fisher-plugins
-.config/atuin
-.config/atuin/config.toml
-.config/fish/completions/fisher.fish
-.config/fish/conf.d/abbrs.fish
-.config/fish/fish_plugins
-.config/fish/functions/fisher.fish
-.config/ghostty
-.config/ghostty/config
-.config/helix
-.config/helix/config.toml
-.ssh/authorized_keys
-.ssh/config
-.ssh/id_ed25519
-.ssh/id_ed25519.pub
-.ssh/known_hosts
-.ssh/known_hosts.old
+.zshenv
 {{- end  }}
