@@ -7,5 +7,3 @@ style = "auto"
 
 [sync]
 records = true
-
-# vim: set filetype=toml:
