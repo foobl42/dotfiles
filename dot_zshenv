@@ -1,0 +1,16 @@
+# Ensure XDG environment
+export XDG_BIN_HOME="$HOME/.local/bin"
+export XDG_CACHE_HOME="$HOME/.cache"
+export XDG_CONFIG_HOME="$HOME/.config"
+export XDG_DATA_HOME="$HOME/.local/share"
+export XDG_STATE_HOME="$HOME/.local/state"
+if [[ -n "$TMPDIR" && -d "$TMPDIR" ]]; then
+    export XDG_RUNTIME_DIR="$TMPDIR"
+else
+    export XDG_RUNTIME_DIR="/tmp"
+fi
+
+# Configure config home for zsh
+if [[ -z "${ZDOTDIR}" ]]; then
+    export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
+fi

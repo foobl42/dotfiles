@@ -1,0 +1,93 @@
+# Ensure XDG environment
+export XDG_BIN_HOME="$HOME/.local/bin"
+export XDG_CACHE_HOME="$HOME/.cache"
+export XDG_CONFIG_HOME="$HOME/.config"
+export XDG_DATA_HOME="$HOME/.local/share"
+export XDG_STATE_HOME="$HOME/.local/state"
+if [ -n "${TMPDIR}" ] && [ -d "${TMPDIR}" ]; then
+    export XDG_RUNTIME_DIR="$TMPDIR"
+else
+    export XDG_RUNTIME_DIR="/tmp"
+fi
+
+{{- $brewDir := includeTemplate "get_command_dir" "brew" -}}
+{{- $hasRustup := false -}}
+{{- if not (empty $brewDir)  }}
+
+{{-   $hasRustup = not (empty (includeTemplate "get_command_bin" "rustup"))  }}
+{{-   if $hasRustup  }}
+
+# Add rustup's bin dir to path PRIOR to homebrew's bin dir
+export PATH="{{ clean (print $brewDir "/../opt/rustup/bin") }}:$PATH"
+{{-   end  }}
+
+# Wire-up homebrew environment
+{{- $brewBin := joinPath $brewDir "brew"  }}
+if command -v {{ $brewBin }} >/dev/null 2>&1; then
+    eval "$({{ $brewBin }} shellenv bash)"
+fi
+export HOMEBREW_NO_ANALYTICS="1"
+export HOMEBREW_NO_ENV_HINTS="1"
+{{- end  }}
+
+{{- if not (empty (includeTemplate "get_command_bin" "orbctl"))  }}
+
+# Setup orbstack/docker environment
+if [ -f ~/.orbstack/shell/init.bash ]; then
+    source ~/.orbstack/shell/init.bash 2>/dev/null || :
+fi
+export DOCKER_CONFIG="$XDG_CONFIG_HOME/docker"
+{{- end  }}
+
+# Prepend user directories to path
+{{- if $hasRustup  }}
+export PATH="$XDG_DATA_HOME/cargo/bin:$PATH"
+{{- end  }}
+export PATH="$XDG_BIN_HOME:$PATH"
+
+# Exit unless interactive
+[[ $- != *i* ]] && return
+
+# Setup user environment
+export EDITOR="vim"
+export PAGER="less -R"
+export TERM="xterm-256color"
+export VISUAL="${EDITOR}"
+
+# Setup misc environment
+{{- if $hasRustup  }}
+export CARGO_HOME="$XDG_DATA_HOME/cargo"
+{{- end  }}
+{{- if not (empty (includeTemplate "get_command_bin" "ghcup"))  }}
+export GHCUP_USE_XDG_DIRS="true"
+{{- end  }}
+export HISTFILE="$XDG_STATE_HOME/bash/history"
+export LESSHISTFILE="$XDG_STATE_HOME/less/history"
+{{- if $hasRustup  }}
+export RUSTUP_HOME="$XDG_DATA_HOME/rustup"
+{{- end  }}
+export SQLITE_HISTORY="$XDG_STATE_HOME/sqlite/history"
+
+{{- if not (empty (includeTemplate "get_command_bin" "direnv"))  }}
+
+# Wire-up direnv
+if command -v direnv >/dev/null 2>&1; then
+    eval "$(direnv hook bash)"
+fi
+{{- end  }}
+
+{{- if not (empty (includeTemplate "get_command_bin" "fzf"))  }}
+
+# Wire-up fzf
+if command -v fzf >/dev/null 2>&1; then
+    eval "$(fzf --bash)"
+fi
+{{- end  }}
+
+{{- if not (empty (includeTemplate "get_command_bin" "zoxide"))  }}
+
+# Wire-up zoxide
+if command -v zoxide >/dev/null 2>&1; then
+    eval "$(zoxide init bash)"
+fi
+{{- end  }}

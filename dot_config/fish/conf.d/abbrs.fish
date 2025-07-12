@@ -82,5 +82,3 @@ abbr -a -- gr 'git rm -r'
 abbr -a -- gr! 'git rm -rf'
 abbr -a -- gre! 'git reset --hard origin/main'
 abbr -a -- gs 'git status'
-
-# vim: set filetype=fish:

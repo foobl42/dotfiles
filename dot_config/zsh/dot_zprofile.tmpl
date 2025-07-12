@@ -1,0 +1,40 @@
+# Ensure current path is unique
+typeset -U PATH path
+
+{{- $brewDir := includeTemplate "get_command_dir" "brew" -}}
+{{- $hasRustup := false -}}
+{{- if not (empty $brewDir)  }}
+
+{{-   $hasRustup = not (empty (includeTemplate "get_command_bin" "rustup"))  }}
+{{-   if $hasRustup  }}
+
+# Add rustup's bin dir to path PRIOR to homebrew's bin dir
+path=("{{ clean (print $brewDir "/../opt/rustup/bin") }}" $path)
+{{-   end  }}
+
+# Wire-up homebrew environment
+eval "$({{ joinPath $brewDir "brew" }} shellenv zsh)"
+export HOMEBREW_NO_ANALYTICS=1
+export HOMEBREW_NO_ENV_HINTS=1
+{{- end  }}
+
+{{- if not (empty (includeTemplate "get_command_bin" "orbctl"))  }}
+
+# Setup orbstack/docker environment
+if [[ -f ~/.orbstack/shell/init.zsh ]]; then
+    source ~/.orbstack/shell/init.zsh 2>/dev/null || :
+fi
+export DOCKER_CONFIG="$XDG_CONFIG_HOME/docker"
+{{- end  }}
+
+# Prepend user directories to path
+{{- if $hasRustup  }}
+path=("$XDG_DATA_HOME/cargo/bin" $path)
+{{- end  }}
+path=("$XDG_BIN_HOME" $path)
+
+{{- if .flags.isMacOS  }}
+
+# Disable shell sessions (macos)
+export SHELL_SESSIONS_DISABLE=1
+{{- end  }}

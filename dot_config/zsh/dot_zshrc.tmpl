@@ -1,0 +1,48 @@
+{{- $hasRustup := not (empty (includeTemplate "get_command_bin" "rustup")) -}}
+
+# Exit unless interactive
+[[ -o interactive ]] || return
+
+# Setup user environment
+export EDITOR="vim"
+export PAGER="less -R"
+export TERM="xterm-256color"
+export VISUAL="$EDITOR"
+
+# Setup misc environment
+{{- if $hasRustup  }}
+export CARGO_HOME="$XDG_DATA_HOME/cargo"
+{{- end  }}
+{{- if not (empty (includeTemplate "get_command_bin" "ghcup"))  }}
+export GHCUP_USE_XDG_DIRS="true"
+{{- end  }}
+export HISTFILE="$XDG_STATE_HOME/zsh/history"
+export LESSHISTFILE="$XDG_STATE_HOME/less/history"
+{{- if $hasRustup  }}
+export RUSTUP_HOME="$XDG_DATA_HOME/rustup"
+{{- end  }}
+export SQLITE_HISTORY="$XDG_STATE_HOME/sqlite/history"
+
+{{- if not (empty (includeTemplate "get_command_bin" "direnv"))  }}
+
+# Wire-up direnv
+if command -v direnv >/dev/null 2>&1; then
+    eval "$(direnv hook zsh)"
+fi
+{{- end  }}
+
+{{- if not (empty (includeTemplate "get_command_bin" "fzf"))  }}
+
+# Wire-up fzf
+if command -v fzf >/dev/null 2>&1; then
+    eval "$(fzf --zsh)"
+fi
+{{- end  }}
+
+{{- if not (empty (includeTemplate "get_command_bin" "zoxide"))  }}
+
+# Wire-up zoxide
+if command -v zoxide >/dev/null 2>&1; then
+    eval "$(zoxide init zsh)"
+fi
+{{- end  }}

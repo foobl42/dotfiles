@@ -17,7 +17,12 @@ README.md
 {{- end  }}
 
 {{- if and
-      (hasKey . "flags")
+      (hasKey .flags "isMacOS")
+      (not .flags.isMacOS)  }}
+.bash_sessions_disable
+{{- end  }}
+
+{{- if and
       (hasKey .flags "isPersonalUser")
       (not .flags.isPersonalUser)  }}
 .chezmoiscripts/99-set-git-remote-origin-url
@@ -35,7 +40,6 @@ README.md
 {{- end  }}
 
 {{- if and
-      (hasKey . "flags")
       (hasKey .flags "isPersonalHost")
       (not .flags.isPersonalHost)  }}
 .chezmoiscripts/99-set-git-remote-origin-url
