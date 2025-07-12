@@ -1,3 +1,11 @@
+{{- /*
+
+# NOTE: This template uses the "get_command_bin" template to get the path to the
+# supplied command, or empty if not found; if found, it returns the directory
+# path that the command was found in.
+
+*/ -}}
+
 {{- $command := . -}}
 {{- $commandBin := includeTemplate "get_command_bin" $command -}}
 {{- if not (empty $commandBin) -}}

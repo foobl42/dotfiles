@@ -1,3 +1,10 @@
+{{- /*
+
+# NOTE: This template uses the "get_command_bin" template to get the path to the
+# supplied command, or empty if not found; it will return true if found.
+
+*/ -}}
+
 {{- $command := . -}}
 {{- if not (empty (includeTemplate "get_command_bin" $command)) -}}
 {{-   true -}}

@@ -1,3 +1,13 @@
+{{- /*
+
+# NOTE: This template uses the "is_command_installed" template to determine
+# whether the supplied command was found in a common set of search paths (see
+# "get_command_bin" for the path listing); if found, this template will also
+# check the user PATH for the command. It will return true if both return
+# successfully.
+
+*/ -}}
+
 {{- $command := . -}}
 {{- if and
       (includeTemplate "is_command_installed" $command)

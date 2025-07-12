@@ -1,10 +1,17 @@
-{{- $command := . -}}
+{{- /*
 
+# NOTE: This template evaluates whether the supplied command is located in one
+# of the paths we are searching in. This command does not search the current
+# PATH. It won't find commands outside of the paths listed in this script. If
+# the supplied command is found, the path to this command will be returned.
+
+*/ -}}
+
+{{- $command := . -}}
 {{- if and 
       (ne $command nil)
       (not (empty $command))
       (eq (kindOf $command) "string") -}}
-
 {{-   findExecutable $command (list
         (joinPath (env "HOME") ".local" "bin")
         "/opt/homebrew/bin"
@@ -12,5 +19,4 @@
         "/usr/local/bin"
         "/usr/bin"
         "/bin") -}}
-
 {{- end -}}
