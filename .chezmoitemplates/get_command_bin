@@ -1,0 +1,16 @@
+{{- $command := . -}}
+
+{{- if and 
+      (ne $command nil)
+      (not (empty $command))
+      (eq (kindOf $command) "string") -}}
+
+{{-   findExecutable $command (list
+        (joinPath (env "HOME") ".local" "bin")
+        "/opt/homebrew/bin"
+        "/home/linuxbrew/.linuxbrew/bin"
+        "/usr/local/bin"
+        "/usr/bin"
+        "/bin") -}}
+
+{{- end -}}

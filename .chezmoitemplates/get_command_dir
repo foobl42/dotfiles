@@ -1,0 +1,5 @@
+{{- $command := . -}}
+{{- $commandBin := includeTemplate "get_command_bin" $command -}}
+{{- if not (empty $commandBin) -}}
+{{-   $commandBin | dir -}}
+{{- end -}}

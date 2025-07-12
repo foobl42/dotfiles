@@ -1,0 +1,107 @@
+# Ensure XDG environment
+set -gx XDG_BIN_HOME "$HOME/.local/bin"
+set -gx XDG_CACHE_HOME "$HOME/.cache"
+set -gx XDG_CONFIG_HOME "$HOME/.config"
+set -gx XDG_DATA_HOME "$HOME/.local/share"
+set -gx XDG_STATE_HOME "$HOME/.local/state"
+if test -n "$TMPDIR" -a -d "$TMPDIR"
+    set -gx XDG_RUNTIME_DIR "$TMPDIR"
+else
+    set -gx XDG_RUNTIME_DIR "/tmp"
+end
+
+{{- $brewDir := includeTemplate "get_command_dir" "brew" -}}
+{{- $hasRustup := false -}}
+{{- if not (empty $brewDir)  }}
+
+{{-   $hasRustup = not (empty (includeTemplate "get_command_bin" "rustup")) -}}
+{{-   if $hasRustup  }}
+
+# Add rustup's bin dir to path PRIOR to homebrew's bin dir
+fish_add_path -P {{ clean (print $brewDir "/../opt/rustup/bin") }}
+{{-   end  }}
+
+# Wire-up homebrew environment
+{{- $brewBin := joinPath $brewDir "brew"  }}
+if test -x {{ $brewBin }}
+    {{ $brewBin }} shellenv fish | source
+end
+set -gx HOMEBREW_NO_ANALYTICS 1
+set -gx HOMEBREW_NO_ENV_HINTS 1
+{{- end  }}
+
+{{- if not (empty (includeTemplate "get_command_bin" "orbctl"))  }}
+
+# Setup orbstack/docker environment
+if test -f ~/.orbstack/shell/init2.fish
+    source ~/.orbstack/shell/init2.fish 2>/dev/null || true
+end
+set -gx DOCKER_CONFIG "$XDG_CONFIG_HOME/docker"
+{{- end  }}
+
+# Prepend user directories to path
+{{- if $hasRustup  }}
+fish_add_path -Pm "$XDG_DATA_HOME/cargo/bin"
+{{- end  }}
+fish_add_path -Pm "$XDG_BIN_HOME"
+
+# Exit unless interactive
+status is-interactive || exit
+
+# Setup user environment
+set -gx EDITOR "vim"
+set -gx PAGER "less -R"
+set -gx TERM "xterm-256color"
+set -gx VISUAL "$EDITOR"
+
+# Set fish options
+{{- if and (hasKey .flags "isPersonalUser") .flags.isPersonalUser  }}
+set -g fish_greeting
+set -g fish_key_bindings fish_vi_key_bindings
+{{- end  }}
+
+# Setup misc environment
+{{- if $hasRustup  }}
+set -gx CARGO_HOME "$XDG_DATA_HOME/cargo"
+{{- end  }}
+{{- if not (empty (includeTemplate "get_command_bin" "ghcup"))  }}
+set -gx GHCUP_USE_XDG_DIRS "true"
+{{- end  }}
+set -gx LESSHISTFILE "$XDG_STATE_HOME/less/history"
+{{- if $hasRustup  }}
+set -gx RUSTUP_HOME "$XDG_DATA_HOME/rustup"
+{{- end  }}
+set -gx SQLITE_HISTORY "$XDG_STATE_HOME/sqlite/history"
+
+{{- if not (empty (includeTemplate "get_command_bin" "direnv"))  }}
+
+# Wire-up direnv
+if command -v direnv >/dev/null 2>&1
+    direnv hook fish | source
+end
+{{- end  }}
+
+{{- if not (empty (includeTemplate "get_command_bin" "fzf"))  }}
+
+# Wire-up fzf
+if command -v fzf >/dev/null 2>&1
+    fzf --fish | source
+end
+{{- end  }}
+
+{{- if not (empty (includeTemplate "get_command_bin" "atuin"))  }}
+
+# Wire-up atuin
+# Note: do this after fzf so atuin gets the ctrl+r keybind
+if command -v atuin >/dev/null 2>&1
+    atuin init fish --disable-up-arrow | source
+end
+{{- end  }}
+
+{{- if not (empty (includeTemplate "get_command_bin" "zoxide"))  }}
+
+# Wire-up zoxide
+if command -v zoxide >/dev/null 2>&1
+    zoxide init fish | source
+end
+{{- end  }}

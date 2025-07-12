@@ -1,0 +1,6 @@
+{{- $command := . -}}
+{{- if and
+      (includeTemplate "is_command_installed" $command)
+      (lookPath $command) -}}
+{{-   true -}}
+{{- end -}}

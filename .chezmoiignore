@@ -1,6 +1,14 @@
 LICENSE
 README.md
 
+{{- if not (includeTemplate "is_command_reachable" "fish")  }}
+.chezmoiscripts/99-update-fisher-plugins
+{{- end  }}
+
+{{- if not (includeTemplate "is_command_reachable" "git")  }}
+.chezmoiscripts/99-set-git-remote-origin-url
+{{- end  }}
+
 {{- if not (includeTemplate "is_encryption_enabled" .)  }}
 .ssh/allowed_signers
 .ssh/authorized_keys
@@ -13,6 +21,11 @@ README.md
       (hasKey .flags "isPersonalUser")
       (not .flags.isPersonalUser)  }}
 .chezmoiscripts/99-set-git-remote-origin-url
+.chezmoiscripts/99-update-fisher-plugins
+.config/fish/completions/fisher.fish
+.config/fish/conf.d/abbrs.fish
+.config/fish/fish_plugins
+.config/fish/functions/fisher.fish
 .ssh/authorized_keys
 .ssh/config
 .ssh/id_ed25519

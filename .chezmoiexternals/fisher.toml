@@ -1,0 +1,11 @@
+[".config/fish/completions/fisher.fish"]
+path = "fisher-main/completions/fisher.fish"
+refreshPeriod = "168h"
+type = "archive-file"
+url = "https://github.com/jorgebucaran/fisher/archive/main.tar.gz"
+
+[".config/fish/functions/fisher.fish"]
+path = "fisher-main/functions/fisher.fish"
+refreshPeriod = "168h"
+type = "archive-file"
+url = "https://github.com/jorgebucaran/fisher/archive/main.tar.gz"

@@ -1,0 +1,4 @@
+{{- $command := . -}}
+{{- if not (empty (includeTemplate "get_command_bin" $command)) -}}
+{{-   true -}}
+{{- end -}}

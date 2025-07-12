@@ -1,0 +1,18 @@
+{{- /*
+
+# NOTE: This script updates the installed fish plugins via the fisher utility.
+# This script will either run or not based on the include/exclude logic found in
+# the .chezmoiignore file.
+
+*/ -}}
+
+#!/bin/bash
+# File: fish_plugins: {{ joinPath .chezmoi.homeDir ".config" "fish"
+                           "fish_plugins" | include | sha256sum }}
+# Week: {{ output "date" "+%V" }}
+
+set -eufo pipefail
+
+{{- $fisher := joinPath .chezmoi.homeDir ".config" "fish" "functions"
+      "fisher.fish"  }}
+fish -c "source {{ $fisher }}; fisher update"
