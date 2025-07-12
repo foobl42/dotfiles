@@ -10,20 +10,30 @@ export TERM="xterm-256color"
 export VISUAL="$EDITOR"
 
 # Setup misc environment
-{{- if $hasRustup  }}
+{{- if and $hasRustup
+      (hasKey .flags "isPersonalUser")
+      .flags.isPersonalUser  }}
 export CARGO_HOME="$XDG_DATA_HOME/cargo"
 {{- end  }}
-{{- if not (empty (includeTemplate "get_command_bin" "ghcup"))  }}
+{{- if and
+      (not (empty (includeTemplate "get_command_bin" "ghcup")))
+      (hasKey .flags "isPersonalUser")
+      .flags.isPersonalUser  }}
 export GHCUP_USE_XDG_DIRS="true"
 {{- end  }}
 export HISTFILE="$XDG_STATE_HOME/zsh/history"
 export LESSHISTFILE="$XDG_STATE_HOME/less/history"
-{{- if $hasRustup  }}
+{{- if and $hasRustup
+      (hasKey .flags "isPersonalUser")
+      .flags.isPersonalUser  }}
 export RUSTUP_HOME="$XDG_DATA_HOME/rustup"
 {{- end  }}
 export SQLITE_HISTORY="$XDG_STATE_HOME/sqlite/history"
 
-{{- if not (empty (includeTemplate "get_command_bin" "direnv"))  }}
+{{- if and
+      (not (empty (includeTemplate "get_command_bin" "direnv")))
+      (hasKey .flags "isPersonalUser")
+      .flags.isPersonalUser  }}
 
 # Wire-up direnv
 if command -v direnv >/dev/null 2>&1; then
@@ -31,7 +41,10 @@ if command -v direnv >/dev/null 2>&1; then
 fi
 {{- end  }}
 
-{{- if not (empty (includeTemplate "get_command_bin" "fzf"))  }}
+{{- if and
+      (not (empty (includeTemplate "get_command_bin" "fzf")))
+      (hasKey .flags "isPersonalUser")
+      .flags.isPersonalUser  }}
 
 # Wire-up fzf
 if command -v fzf >/dev/null 2>&1; then
@@ -39,7 +52,10 @@ if command -v fzf >/dev/null 2>&1; then
 fi
 {{- end  }}
 
-{{- if not (empty (includeTemplate "get_command_bin" "zoxide"))  }}
+{{- if and
+      (not (empty (includeTemplate "get_command_bin" "zoxide")))
+      (hasKey .flags "isPersonalUser")
+      .flags.isPersonalUser  }}
 
 # Wire-up zoxide
 if command -v zoxide >/dev/null 2>&1; then
