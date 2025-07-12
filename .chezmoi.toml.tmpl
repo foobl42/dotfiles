@@ -54,7 +54,8 @@ isVirtual = {{ $thisHost.isVirtual }}
 {{- end  }}
 isWindowsOS = {{ eq .chezmoi.os "windows" }}
 
-{{- if and $hasConfigData (eq $thisHost.users.personal .chezmoi.username)  }}
+{{- if and $hasConfigData $thisHost.isPersonal
+      (eq $thisHost.users.personal .chezmoi.username)  }}
 
 [data.git]
 email = "3698140+foobl42@users.noreply.github.com"

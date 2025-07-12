@@ -1,7 +1,6 @@
 {{- if and
-      (hasKey .flags "isPersonalHost")
+      (hasKey .flags "hasConfigData")
       .flags.isPersonalHost
-      (hasKey .flags "isPersonalUser")
       .flags.isPersonalUser -}}
 [commit]
     gpgsign = true
@@ -29,9 +28,8 @@
     allowedSignersFile = ~/.ssh/allowed_signers
 
 {{- if and
-      (hasKey .flags "isPersonalHost")
+      (hasKey .flags "hasConfigData")
       .flags.isPersonalHost
-      (hasKey .flags "isPersonalUser")
       .flags.isPersonalUser  }}
 
 [interactive]

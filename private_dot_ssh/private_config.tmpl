@@ -1,7 +1,6 @@
 {{- if and
-      (hasKey .flags "isPersonalHost")
+      (hasKey .flags "hasConfigData")
       .flags.isPersonalHost
-      (hasKey .flags "isPersonalUser")
       .flags.isPersonalUser -}}
 Include ~/.orbstack/ssh/config
 
@@ -12,9 +11,8 @@ Match host github.com
     User git
 
 {{- if and
-      (hasKey .flags "isPersonalHost")
+      (hasKey .flags "hasConfigData")
       .flags.isPersonalHost
-      (hasKey .flags "isPersonalUser")
       .flags.isPersonalUser  }}
 
 Match host *.local
@@ -22,9 +20,7 @@ Match host *.local
 
 Match all
     AddKeysToAgent yes
-{{- if and
-      (hasKey .flags "isMacOS")
-      .flags.isMacOS  }}
+{{- if .flags.isMacOS  }}
     UseKeychain yes
 {{- end  }}
 {{  end -}}
