@@ -1,36 +1,45 @@
-LICENSE
-README.md
+{{- if not (hasKey . "flags") -}}
+# NOTE: At this stage, either there is no chezmoi config file or the existing
+# config is invalid. Ignoring all files.
+**
 
-{{- if not .flags.isMacOS  }}
-.bash_sessions_disable
-{{- end  }}
+{{- else if empty (includeTemplate "is_encryption_enabled" .) -}}
+# NOTE: At this stage, encryption has not yet been fully enabled. Ignoring all
+# files, with the exception of the "00-ensure-chezmoi-config" script, which will
+# re-run chezmoi init, which will run the pre-init hook script.
+**
+!.chezmoiscripts/00-ensure-chezmoi-config
 
-{{- if not (includeTemplate "is_encryption_enabled" .)  }}
-.chezmoiscripts/99-set-git-remote-origin-url
-.chezmoiscripts/99-update-fisher-plugins
-.config/atuin
-.config/atuin/config.toml
-.config/fish/completions/fisher.fish
-.config/fish/conf.d/abbrs.fish
-.config/fish/fish_plugins
-.config/fish/functions/fisher.fish
-.config/ghostty
-.config/ghostty/config
-.config/helix
-.config/helix/config.toml
-.config/vim/vimrc
-.ssh/allowed_signers
-.ssh/authorized_keys
-.ssh/config
-.ssh/id_ed25519
-.ssh/id_ed25519.pub
-.ssh/known_hosts
-.ssh/known_hosts.old
-{{- end  }}
+{{- else if not (hasKey .flags "hasConfigData") -}}
+# NOTE: At this stage, the config data has not been restored. Ignoring all
+# files, with the exception of the "00-ensure-chezmoi-config" script, which will
+# re-run chezmoi init, which will run the pre-init hook script.
+**
+!.chezmoiscripts/00-ensure-chezmoi-config
 
-{{- if hasKey .flags "hasConfigData"  }}
+{{- else -}}
+# NOTE: At this stage, encryption has been fully enabled, and the config data
+# has been restored. Ignoring the "00-ensure-chezmoi-config" script.
 .chezmoiscripts/00-ensure-chezmoi-config
-{{- else  }}
+
+# NOTE: Ignore file(s) based on current state...
+
+{{-   if not .flags.isMacOS  }}
+.bash_sessions_disable
+{{-   end  }}
+
+{{-   if .flags.isHeadless  }}
+.config/ghostty
+.config/ghostty/config
+{{-   end  }}
+
+{{-   if not .flags.isPersonalHost  }}
+.chezmoiscripts/99-set-git-remote-origin-url
+.ssh/id_ed25519
+.ssh/id_ed25519.pub
+{{-   end  }}
+
+{{-   if not .flags.isPersonalUser  }}
 .chezmoiscripts/99-set-git-remote-origin-url
 .chezmoiscripts/99-update-fisher-plugins
 .config/atuin
@@ -50,82 +59,54 @@ README.md
 .ssh/id_ed25519.pub
 .ssh/known_hosts
 .ssh/known_hosts.old
-{{- end  }}
+{{-   end  }}
 
-{{- if and (hasKey .flags "hasConfigData") .flags.isHeadless  }}
-.config/ghostty
-.config/ghostty/config
-{{- end  }}
-
-{{- if and (hasKey .flags "hasConfigData") (not .flags.isPersonalHost)  }}
-.chezmoiscripts/99-set-git-remote-origin-url
-.ssh/id_ed25519
-.ssh/id_ed25519.pub
-{{- end  }}
-
-{{- if and (hasKey .flags "hasConfigData") (not .flags.isPersonalUser)  }}
-.chezmoiscripts/99-set-git-remote-origin-url
-.chezmoiscripts/99-update-fisher-plugins
+{{-   if not (includeTemplate "is_command_reachable" "atuin")  }}
 .config/atuin
 .config/atuin/config.toml
-.config/fish/completions/fisher.fish
-.config/fish/conf.d/abbrs.fish
-.config/fish/fish_plugins
-.config/fish/functions/fisher.fish
-.config/ghostty
-.config/ghostty/config
-.config/helix
-.config/helix/config.toml
-.config/vim/vimrc
-.ssh/authorized_keys
-.ssh/config
-.ssh/id_ed25519
-.ssh/id_ed25519.pub
-.ssh/known_hosts
-.ssh/known_hosts.old
-{{- end  }}
+{{-   end  }}
 
-{{- if not (includeTemplate "is_command_reachable" "atuin")  }}
-.config/atuin
-.config/atuin/config.toml
-{{- end  }}
-
-{{- if not (includeTemplate "is_command_reachable" "bash")  }}
+{{-   if not (includeTemplate "is_command_reachable" "bash")  }}
 .bash_profile
 .bash_sessions_disable
 .bashrc
-{{- end  }}
+{{-   end  }}
 
-{{- if not (includeTemplate "is_command_reachable" "fish")  }}
+{{-   if not (includeTemplate "is_command_reachable" "fish")  }}
 .chezmoiscripts/99-update-fisher-plugins
 .config/fish/completions/fisher.fish
 .config/fish/conf.d/abbrs.fish
 .config/fish/config.fish
 .config/fish/fish_plugins
 .config/fish/functions/fisher.fish
-{{- end  }}
+{{-   end  }}
 
-{{- if not (includeTemplate "is_command_reachable" "ghostty")  }}
+{{-   if not (includeTemplate "is_command_reachable" "ghostty")  }}
 .config/ghostty
 .config/ghostty/config
-{{- end  }}
+{{-   end  }}
 
-{{- if not (includeTemplate "is_command_reachable" "git")  }}
+{{-   if not (includeTemplate "is_command_reachable" "git")  }}
 .chezmoiscripts/99-set-git-remote-origin-url
 .config/git/config
-{{- end  }}
+{{-   end  }}
 
-{{- if not (includeTemplate "is_command_reachable" "hx")  }}
+{{-   if not (includeTemplate "is_command_reachable" "hx")  }}
 .config/helix
 .config/helix/config.toml
-{{- end  }}
+{{-   end  }}
 
-{{- if not (includeTemplate "is_command_reachable" "vim")  }}
+{{-   if not (includeTemplate "is_command_reachable" "vim")  }}
 .config/vim/vimrc
-{{- end  }}
+{{-   end  }}
 
-{{- if not (includeTemplate "is_command_reachable" "zsh")  }}
+{{-   if not (includeTemplate "is_command_reachable" "zsh")  }}
 .config/zsh/.zprofile
 .config/zsh/.zshrc
 .zshenv
+{{-   end  }}
+
+# NOTE: Always ignore these files.
+LICENSE
+README.md
 {{- end  }}

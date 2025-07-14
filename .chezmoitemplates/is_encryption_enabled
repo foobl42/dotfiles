@@ -28,6 +28,6 @@
 {{-     $result = false -}}
 {{-   end -}}
 {{- end -}}
-{{- if eq $result true -}}
+{{- if $result -}}
 {{-   true -}}
 {{- end -}}
