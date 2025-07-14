@@ -7,8 +7,10 @@
 */ -}}
 
 #!/bin/bash
-# File: fish_plugins: {{ joinPath .chezmoi.homeDir ".config" "fish"
-                           "fish_plugins" | include | sha256sum }}
+{{- $file := joinPath .chezmoi.homeDir ".config" "fish" "fish_plugins"  }}
+{{- if not (empty (stat $file))  }}
+# File: fish_plugins: {{ include $file | sha256sum }}
+{{- end  }}
 # Week: {{ output "date" "+%V" }}
 
 set -eufo pipefail
