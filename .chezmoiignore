@@ -74,11 +74,16 @@
 
 {{-   if not (includeTemplate "is_command_reachable" "fish")  }}
 .chezmoiscripts/99-update-fisher-plugins
+.config/fish
+.config/fish/completions
 .config/fish/completions/fisher.fish
+.config/fish/conf.d
 .config/fish/conf.d/abbrs.fish
 .config/fish/config.fish
 .config/fish/fish_plugins
+.config/fish/functions
 .config/fish/functions/fisher.fish
+.config/fish/themes
 {{-   end  }}
 
 {{-   if not (includeTemplate "is_command_reachable" "ghostty")  }}
@@ -88,6 +93,7 @@
 
 {{-   if not (includeTemplate "is_command_reachable" "git")  }}
 .chezmoiscripts/99-set-git-remote-origin-url
+.config/git
 .config/git/config
 {{-   end  }}
 
@@ -97,10 +103,12 @@
 {{-   end  }}
 
 {{-   if not (includeTemplate "is_command_reachable" "vim")  }}
+.config/vim
 .config/vim/vimrc
 {{-   end  }}
 
 {{-   if not (includeTemplate "is_command_reachable" "zsh")  }}
+.config/zsh
 .config/zsh/.zprofile
 .config/zsh/.zshrc
 .zshenv
