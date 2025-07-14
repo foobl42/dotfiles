@@ -1,17 +1,34 @@
 # Ensure current path is unique
 typeset -U PATH path
 
+
 {{- $brewDir := includeTemplate "get_command_dir" "brew" -}}
 {{- $hasRustup := false -}}
 {{- if not (empty $brewDir)  }}
+
+{{-   if not (includeTemplate "is_command_installed" "python")  }}
+{{-     $pythonDir := output "bash" "-c"
+          "brew --prefix python3 2>/dev/null || true"  }}
+{{-     if not (empty $pythonDir)  }}
+{{-       $pythonDir = joinPath (trim $pythonDir) "libexec" "bin"  }}
+
+# Add (brew-installed) python3's libexec/bin dir to path
+path=("{{ $pythonDir }}" $path)
+{{-     end  }}
+{{-   end  }}
 
 {{-   $hasRustup = not (empty (includeTemplate "get_command_bin" "rustup"))  }}
 {{-   if and $hasRustup
         (hasKey .flags "hasConfigData")
         .flags.isPersonalUser  }}
+{{-     $rustupDir := output "bash" "-c"
+          "brew --prefix rustup 2>/dev/null || true"  }}
+{{-     if not (empty $rustupDir)  }}
+{{-       $rustupDir = joinPath (trim $rustupDir) "bin"  }}
 
 # Add rustup's bin dir to path PRIOR to homebrew's bin dir
-path=("{{ clean (print $brewDir "/../opt/rustup/bin") }}" $path)
+path=("{{ $rustupDir }}" $path)
+{{-     end  }}
 {{-   end  }}
 
 # Wire-up homebrew environment
