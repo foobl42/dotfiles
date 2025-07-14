@@ -1,16 +1,16 @@
 {{- /*
 
 # NOTE: This template evaluates the various parts of the existing encryption
-# configuration, and will return true or false based on this.
+# configuration, and will return true if no issues are found.
 
 */ -}}
 
-{{- $result := true -}}
+{{- $issueFound := false -}}
 {{- $identityFile := joinPath (dir .chezmoi.configFile) "chezmoi.key" -}}
 {{- if or
       (empty (stat .chezmoi.configFile))
       (empty (stat $identityFile)) -}}
-{{-   $result = false -}}
+{{-   $issueFound = true -}}
 {{- else -}}
 {{-   $config := include .chezmoi.configFile | fromToml -}}
 {{-   $encryptionValue := $config | jq ".encryption" | mustFirst -}}
@@ -25,9 +25,9 @@
         (empty $recipientValue)
         (not (contains $recipientValue $identity))
         (not (contains "AGE-SECRET-KEY" $identity)) -}}
-{{-     $result = false -}}
+{{-     $issueFound = true -}}
 {{-   end -}}
 {{- end -}}
-{{- if $result -}}
+{{- if not $issueFound -}}
 {{-   true -}}
 {{- end -}}
