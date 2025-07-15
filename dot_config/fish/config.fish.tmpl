@@ -14,28 +14,16 @@ end
 {{- $hasRustup := false -}}
 {{- if not (empty $brewDir)  }}
 
-{{-   if not (includeTemplate "is_command_installed" "python")  }}
-{{-     $pythonDir := output "bash" "-c"
-          "brew --prefix python3 2>/dev/null || true"  }}
-{{-     if not (empty $pythonDir)  }}
-{{-       $pythonDir = joinPath (trim $pythonDir) "libexec" "bin"  }}
-
-# Add (brew-installed) python3's libexec/bin dir to path
-fish_add_path -P {{ $pythonDir }}
-{{-     end  }}
-{{-   end  }}
-
-{{-   $hasRustup = not (empty (includeTemplate "get_command_bin" "rustup"))  }}
-{{-   if and $hasRustup
-        (hasKey .flags "hasConfigData")
-        .flags.isPersonalUser  }}
-{{-     $rustupDir := output "bash" "-c"
+{{-   $hasRustup = not (empty (includeTemplate "is_command_reachable"
+        "rustup"))  }}
+{{-   if and $hasRustup .flags.isPersonalHost .flags.isPersonalUser  }}
+{{-     $cargoDir := output "bash" "-c"
           "brew --prefix rustup 2>/dev/null || true"  }}
-{{-     if not (empty $rustupDir)  }}
-{{-       $rustupDir = joinPath (trim $rustupDir) "bin"  }}
+{{-     if not (empty $cargoDir)  }}
+{{-       $cargoDir = joinPath (trim $cargoDir) "bin"  }}
 
 # Add rustup's bin dir to path PRIOR to homebrew's bin dir
-fish_add_path -P {{ $rustupDir }}
+fish_add_path -P {{ $cargoDir }}
 {{-     end  }}
 {{-   end  }}
 
@@ -49,21 +37,34 @@ set -gx HOMEBREW_NO_ENV_HINTS 1
 {{- end  }}
 
 {{- if and
-      (not (empty (includeTemplate "get_command_bin" "orbctl")))
-      (hasKey .flags "hasConfigData")
-      .flags.isPersonalUser  }}
+      (includeTemplate "is_command_reachable" "orbctl")
+      .flags.isPersonalHost .flags.isPersonalUser  }}
 
 # Setup orbstack/docker environment
-if test -f ~/.orbstack/shell/init2.fish
-    source ~/.orbstack/shell/init2.fish 2>/dev/null || true
+if command -v orbctl >/dev/null 2>&1
+    if test -r "$HOME/.orbstack/shell/init.fish"
+        source "$HOME/.orbstack/shell/init.fish" 2>/dev/null || true
+    end
+    set -gx DOCKER_CONFIG "$XDG_CONFIG_HOME/docker"
 end
-set -gx DOCKER_CONFIG "$XDG_CONFIG_HOME/docker"
 {{- end  }}
 
+{{-   if and
+        (includeTemplate "is_command_reachable" "python3")
+        .flags.isPersonalHost .flags.isPersonalUser  }}
+
+# Ensure a python virtual environment
+if command -v python3 >/dev/null 2>&1
+    if not test -r "$XDG_CONFIG_HOME/venv/bin/activate.fish"
+        python3 -m venv install "$XDG_CONFIG_HOME/venv"
+    end
+    set -gx VIRTUAL_ENV_DISABLE_PROMPT "1"
+    source "$XDG_CONFIG_HOME/venv/bin/activate.fish"
+end
+{{-   end  }}
+
 # Prepend user directories to path
-{{- if and $hasRustup
-      (hasKey .flags "hasConfigData")
-      .flags.isPersonalUser  }}
+{{- if and $hasRustup .flags.isPersonalHost .flags.isPersonalUser  }}
 fish_add_path -Pm "$XDG_DATA_HOME/cargo/bin"
 {{- end  }}
 fish_add_path -Pm "$XDG_BIN_HOME"
@@ -77,9 +78,7 @@ set -gx PAGER "less -R"
 set -gx TERM "xterm-256color"
 set -gx VISUAL "$EDITOR"
 
-{{- if and
-      (hasKey .flags "hasConfigData")
-      .flags.isPersonalUser  }}
+{{- if .flags.isPersonalUser  }}
 
 # Set fish options
 set -g fish_greeting
@@ -87,29 +86,27 @@ set -g fish_key_bindings fish_vi_key_bindings
 {{- end  }}
 
 # Setup misc environment
-{{- if and $hasRustup
-      (hasKey .flags "hasConfigData")
-      .flags.isPersonalUser  }}
+{{- if and $hasRustup .flags.isPersonalHost .flags.isPersonalUser  }}
 set -gx CARGO_HOME "$XDG_DATA_HOME/cargo"
 {{- end  }}
 {{- if and
-      (not (empty (includeTemplate "get_command_bin" "ghcup")))
-      (hasKey .flags "hasConfigData")
-      .flags.isPersonalUser  }}
+      (includeTemplate "is_command_reachable" "ghcup")
+      .flags.isPersonalHost .flags.isPersonalUser  }}
 set -gx GHCUP_USE_XDG_DIRS "true"
 {{- end  }}
 set -gx LESSHISTFILE "$XDG_STATE_HOME/less/history"
-{{- if and $hasRustup
-      (hasKey .flags "hasConfigData")
-      .flags.isPersonalUser  }}
+{{- if and $hasRustup .flags.isPersonalHost .flags.isPersonalUser  }}
 set -gx RUSTUP_HOME "$XDG_DATA_HOME/rustup"
 {{- end  }}
+{{- if and
+      (includeTemplate "is_command_reachable" "sqlite3")
+      .flags.isPersonalUser  }}
 set -gx SQLITE_HISTORY "$XDG_STATE_HOME/sqlite/history"
+{{- end  }}
 
 {{- if and
-      (not (empty (includeTemplate "get_command_bin" "direnv")))
-      (hasKey .flags "hasConfigData")
-      .flags.isPersonalUser  }}
+      (includeTemplate "is_command_reachable" "direnv")
+      .flags.isPersonalHost .flags.isPersonalUser  }}
 
 # Wire-up direnv
 if command -v direnv >/dev/null 2>&1
@@ -118,8 +115,7 @@ end
 {{- end  }}
 
 {{- if and
-      (not (empty (includeTemplate "get_command_bin" "fzf")))
-      (hasKey .flags "hasConfigData")
+      (includeTemplate "is_command_reachable" "fzf")
       .flags.isPersonalUser  }}
 
 # Wire-up fzf
@@ -129,8 +125,7 @@ end
 {{- end  }}
 
 {{- if and
-      (not (empty (includeTemplate "get_command_bin" "atuin")))
-      (hasKey .flags "hasConfigData")
+      (includeTemplate "is_command_reachable" "atuin")
       .flags.isPersonalUser  }}
 
 # Wire-up atuin
@@ -141,8 +136,7 @@ end
 {{- end  }}
 
 {{- if and
-      (not (empty (includeTemplate "get_command_bin" "zoxide")))
-      (hasKey .flags "hasConfigData")
+      (includeTemplate "is_command_reachable" "zoxide")
       .flags.isPersonalUser  }}
 
 # Wire-up zoxide

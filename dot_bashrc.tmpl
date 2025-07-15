@@ -14,28 +14,16 @@ fi
 {{- $hasRustup := false -}}
 {{- if not (empty $brewDir)  }}
 
-{{-   if not (includeTemplate "is_command_installed" "python")  }}
-{{-     $pythonDir := output "bash" "-c"
-          "brew --prefix python3 2>/dev/null || true"  }}
-{{-     if not (empty $pythonDir)  }}
-{{-       $pythonDir = joinPath (trim $pythonDir) "libexec" "bin"  }}
-
-# Add (brew-installed) python3's libexec/bin dir to path
-export PATH="{{ $pythonDir }}:$PATH"
-{{-     end  }}
-{{-   end  }}
-
-{{-   $hasRustup = not (empty (includeTemplate "get_command_bin" "rustup"))  }}
-{{-   if and $hasRustup
-        (hasKey .flags "hasConfigData")
-        .flags.isPersonalUser  }}
-{{-     $rustupDir := output "bash" "-c"
+{{-   $hasRustup = not (empty (includeTemplate "is_command_reachable"
+        "rustup"))  }}
+{{-   if and $hasRustup .flags.isPersonalHost .flags.isPersonalUser  }}
+{{-     $cargoDir := output "bash" "-c"
           "brew --prefix rustup 2>/dev/null || true"  }}
-{{-     if not (empty $rustupDir)  }}
-{{-       $rustupDir = joinPath (trim $rustupDir) "bin"  }}
+{{-     if not (empty $cargoDir)  }}
+{{-       $cargoDir = joinPath (trim $cargoDir) "bin"  }}
 
 # Add rustup's bin dir to path PRIOR to homebrew's bin dir
-export PATH="{{ $rustupDir }}:$PATH"
+export PATH="{{ $cargoDir }}:$PATH"
 {{-     end  }}
 {{-   end  }}
 
@@ -49,21 +37,34 @@ export HOMEBREW_NO_ENV_HINTS="1"
 {{- end  }}
 
 {{- if and
-      (not (empty (includeTemplate "get_command_bin" "orbctl")))
-      (hasKey .flags "hasConfigData")
-      .flags.isPersonalUser  }}
+      (includeTemplate "is_command_reachable" "orbctl")
+      .flags.isPersonalHost .flags.isPersonalUser  }}
 
 # Setup orbstack/docker environment
-if [ -f ~/.orbstack/shell/init.bash ]; then
-    source ~/.orbstack/shell/init.bash 2>/dev/null || :
+if command -v orbctl >/dev/null 2>&1; then
+    if [ -r "$HOME/.orbstack/shell/init.bash" ]; then
+        source "$HOME/.orbstack/shell/init.bash" 2>/dev/null || true
+    fi
+    export DOCKER_CONFIG="$XDG_CONFIG_HOME/docker"
 fi
-export DOCKER_CONFIG="$XDG_CONFIG_HOME/docker"
 {{- end  }}
 
+{{-   if and
+        (includeTemplate "is_command_reachable" "python3")
+        .flags.isPersonalHost .flags.isPersonalUser  }}
+
+# Ensure a python virtual environment
+if command -v python3 >/dev/null 2>&1; then
+    if [ ! -r "$XDG_CONFIG_HOME/venv/bin/activate" ]; then
+        python3 -m venv install "$XDG_CONFIG_HOME/venv"
+    fi
+    export VIRTUAL_ENV_DISABLE_PROMPT="1"
+    source "$XDG_CONFIG_HOME/venv/bin/activate"
+fi
+{{-   end  }}
+
 # Prepend user directories to path
-{{- if and $hasRustup
-      (hasKey .flags "hasConfigData")
-      .flags.isPersonalUser  }}
+{{- if and $hasRustup .flags.isPersonalHost .flags.isPersonalUser  }}
 export PATH="$XDG_DATA_HOME/cargo/bin:$PATH"
 {{- end  }}
 export PATH="$XDG_BIN_HOME:$PATH"
@@ -78,30 +79,28 @@ export TERM="xterm-256color"
 export VISUAL="${EDITOR}"
 
 # Setup misc environment
-{{- if and $hasRustup
-      (hasKey .flags "hasConfigData")
-      .flags.isPersonalUser  }}
+{{- if and $hasRustup .flags.isPersonalHost .flags.isPersonalUser  }}
 export CARGO_HOME="$XDG_DATA_HOME/cargo"
 {{- end  }}
 {{- if and
-      (not (empty (includeTemplate "get_command_bin" "ghcup")))
-      (hasKey .flags "hasConfigData")
-      .flags.isPersonalUser  }}
+      (includeTemplate "is_command_reachable" "ghcup")
+      .flags.isPersonalHost .flags.isPersonalUser  }}
 export GHCUP_USE_XDG_DIRS="true"
 {{- end  }}
 export HISTFILE="$XDG_STATE_HOME/bash/history"
 export LESSHISTFILE="$XDG_STATE_HOME/less/history"
-{{- if and $hasRustup
-      (hasKey .flags "hasConfigData")
-      .flags.isPersonalUser  }}
+{{- if and $hasRustup .flags.isPersonalHost .flags.isPersonalUser  }}
 export RUSTUP_HOME="$XDG_DATA_HOME/rustup"
 {{- end  }}
+{{- if and
+      (includeTemplate "is_command_reachable" "sqlite3")
+      .flags.isPersonalUser  }}
 export SQLITE_HISTORY="$XDG_STATE_HOME/sqlite/history"
+{{- end  }}
 
 {{- if and
-      (not (empty (includeTemplate "get_command_bin" "direnv")))
-      (hasKey .flags "hasConfigData")
-      .flags.isPersonalUser  }}
+      (includeTemplate "is_command_reachable" "direnv")
+      .flags.isPersonalHost .flags.isPersonalUser  }}
 
 # Wire-up direnv
 if command -v direnv >/dev/null 2>&1; then
@@ -110,8 +109,7 @@ fi
 {{- end  }}
 
 {{- if and
-      (not (empty (includeTemplate "get_command_bin" "fzf")))
-      (hasKey .flags "hasConfigData")
+      (includeTemplate "is_command_reachable" "fzf")
       .flags.isPersonalUser  }}
 
 # Wire-up fzf
@@ -121,8 +119,7 @@ fi
 {{- end  }}
 
 {{- if and
-      (not (empty (includeTemplate "get_command_bin" "zoxide")))
-      (hasKey .flags "hasConfigData")
+      (includeTemplate "is_command_reachable" "zoxide")
       .flags.isPersonalUser  }}
 
 # Wire-up zoxide

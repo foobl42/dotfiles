@@ -1,4 +1,5 @@
-{{- $hasRustup := not (empty (includeTemplate "get_command_bin" "rustup")) -}}
+{{- $hasRustup := not (empty (includeTemplate "is_command_reachable"
+      "rustup")) -}}
 
 # Exit unless interactive
 [[ -o interactive ]] || return
@@ -10,30 +11,28 @@ export TERM="xterm-256color"
 export VISUAL="$EDITOR"
 
 # Setup misc environment
-{{- if and $hasRustup
-      (hasKey .flags "hasConfigData")
-      .flags.isPersonalUser  }}
+{{- if and $hasRustup .flags.isPersonalHost .flags.isPersonalUser  }}
 export CARGO_HOME="$XDG_DATA_HOME/cargo"
 {{- end  }}
 {{- if and
-      (not (empty (includeTemplate "get_command_bin" "ghcup")))
-      (hasKey .flags "hasConfigData")
-      .flags.isPersonalUser  }}
+      (includeTemplate "is_command_reachable" "ghcup")
+      .flags.isPersonalHost .flags.isPersonalUser  }}
 export GHCUP_USE_XDG_DIRS="true"
 {{- end  }}
 export HISTFILE="$XDG_STATE_HOME/zsh/history"
 export LESSHISTFILE="$XDG_STATE_HOME/less/history"
-{{- if and $hasRustup
-      (hasKey .flags "hasConfigData")
-      .flags.isPersonalUser  }}
+{{- if and $hasRustup .flags.isPersonalHost .flags.isPersonalUser  }}
 export RUSTUP_HOME="$XDG_DATA_HOME/rustup"
 {{- end  }}
+{{- if and
+      (includeTemplate "is_command_reachable" "sqlite3")
+      .flags.isPersonalUser  }}
 export SQLITE_HISTORY="$XDG_STATE_HOME/sqlite/history"
+{{- end  }}
 
 {{- if and
-      (not (empty (includeTemplate "get_command_bin" "direnv")))
-      (hasKey .flags "hasConfigData")
-      .flags.isPersonalUser  }}
+      (includeTemplate "is_command_reachable" "direnv")
+      .flags.isPersonalHost .flags.isPersonalUser  }}
 
 # Wire-up direnv
 if command -v direnv >/dev/null 2>&1; then
@@ -42,8 +41,7 @@ fi
 {{- end  }}
 
 {{- if and
-      (not (empty (includeTemplate "get_command_bin" "fzf")))
-      (hasKey .flags "hasConfigData")
+      (includeTemplate "is_command_reachable" "fzf")
       .flags.isPersonalUser  }}
 
 # Wire-up fzf
@@ -53,8 +51,7 @@ fi
 {{- end  }}
 
 {{- if and
-      (not (empty (includeTemplate "get_command_bin" "zoxide")))
-      (hasKey .flags "hasConfigData")
+      (includeTemplate "is_command_reachable" "zoxide")
       .flags.isPersonalUser  }}
 
 # Wire-up zoxide

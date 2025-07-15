@@ -70,6 +70,7 @@
 .bash_profile
 .bash_sessions_disable
 .bashrc
+.local/state/bash
 {{-   end  }}
 
 {{-   if not (includeTemplate "is_command_reachable" "fish")  }}
@@ -102,6 +103,14 @@
 .config/helix/config.toml
 {{-   end  }}
 
+{{-   if not (includeTemplate "is_command_reachable" "less")  }}
+.local/state/less
+{{-   end  }}
+
+{{-   if not (includeTemplate "is_command_reachable" "sqlite3")  }}
+.local/state/sqlite
+{{-   end  }}
+
 {{-   if not (includeTemplate "is_command_reachable" "vim")  }}
 .config/vim
 .config/vim/vimrc
@@ -111,6 +120,7 @@
 .config/zsh
 .config/zsh/.zprofile
 .config/zsh/.zshrc
+.local/state/zsh
 .zshenv
 {{-   end  }}
 
