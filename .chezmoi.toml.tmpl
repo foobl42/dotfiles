@@ -57,12 +57,8 @@ isWindowsOS = {{ eq .chezmoi.os "windows" }}
       (eq $thisHost.users.personal .chezmoi.username)  }}
 
 [data.git]
-email = "3698140+foobl42@users.noreply.github.com"
-name = "Lee DeLapp"
-
-[data.github]
-repo = "dotfiles"
-user = "foobl42"
+email = "{{ $configData.git.email }}"
+name = "{{ $configData.git.name }}"
 {{- end  }}
 
 [hooks.init.pre]
