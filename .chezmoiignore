@@ -53,8 +53,6 @@
 .config/fish/functions/fisher.fish
 .config/ghostty
 .config/ghostty/config
-.config/helix
-.config/helix/config.toml
 .config/vim/vimrc
 .ssh/authorized_keys
 .ssh/config
@@ -99,11 +97,6 @@
 .chezmoiscripts/99-set-git-remote-origin-url
 .config/git
 .config/git/config
-{{-   end  }}
-
-{{-   if not (includeTemplate "is_command_reachable" "hx")  }}
-.config/helix
-.config/helix/config.toml
 {{-   end  }}
 
 {{-   if not (includeTemplate "is_command_reachable" "less")  }}
