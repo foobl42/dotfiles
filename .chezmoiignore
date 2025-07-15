@@ -1,7 +1,10 @@
 {{- if not (hasKey . "flags") -}}
 # NOTE: At this stage, either there is no chezmoi config file or the existing
-# config is invalid. Ignoring all files.
+# config is invalid. Ignoring all files, with the exception of the
+# "00-ensure-chezmoi-config" script, which will re-run chezmoi init, which will
+# run the pre-init hook script.
 **
+!.chezmoiscripts/00-ensure-chezmoi-config
 
 {{- else if empty (includeTemplate "is_encryption_enabled" .) -}}
 # NOTE: At this stage, encryption has not yet been fully enabled. Ignoring all
