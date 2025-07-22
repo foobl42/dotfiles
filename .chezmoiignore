@@ -27,6 +27,10 @@
 
 # NOTE: Ignore file(s) based on current state...
 
+{{-   if not (or .flags.isLinuxOS .flags.isMacOS)  }}
+.chezmoiscripts/01-ensure-homebrew
+{{-   end  }}
+
 {{-   if not .flags.isMacOS  }}
 .bash_sessions_disable
 {{-   end  }}
@@ -40,6 +44,10 @@
 .chezmoiscripts/99-set-git-remote-origin-url
 .ssh/id_ed25519
 .ssh/id_ed25519.pub
+{{-   end  }}
+
+{{-   if not .flags.isAdminUser  }}
+.chezmoiscripts/01-ensure-homebrew
 {{-   end  }}
 
 {{-   if not .flags.isPersonalUser  }}
@@ -60,6 +68,10 @@
 .ssh/id_ed25519.pub
 .ssh/known_hosts
 .ssh/known_hosts.old
+{{-   end  }}
+
+{{-   if includeTemplate "is_command_installed" "brew"  }}
+.chezmoiscripts/01-ensure-homebrew
 {{-   end  }}
 
 {{-   if not (includeTemplate "is_command_reachable" "atuin")  }}
