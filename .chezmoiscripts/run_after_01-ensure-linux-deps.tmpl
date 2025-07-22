@@ -1,4 +1,5 @@
 {{- if or
+      (not (includeTemplate "is_command_reachable" "curl"))
       (not (includeTemplate "is_command_reachable" "gcc"))
       (not (includeTemplate "is_command_reachable" "git"))
       (not (includeTemplate "is_command_reachable" "make")) -}}
@@ -7,21 +8,27 @@
 
 set -eufo pipefail
 
-if ! command -v apt &> /dev/null; then
-    echo "Unable to find 'apt' command. Aborting."
+if ! command -v apt-get &> /dev/null; then
+    echo "Unable to find 'apt-get' command. Aborting."
     exit 1
 fi
 
-sudo apt update
+sudo apt-get update
 
 if ! dpkg -l build-essential &> /dev/null; then
-    sudo apt install build-essential \
+    sudo apt-get install build-essential \
         && echo "Build-essential install was successful." \
         || echo "Build-essential install was unsuccessful."
 fi
 
+if ! dpkg -l curl &> /dev/null; then
+    sudo apt-get install curl \
+        && echo "Curl install was successful." \
+        || echo "Curl install was unsuccessful."
+fi
+
 if ! dpkg -l git &> /dev/null; then
-    sudo apt install git \
+    sudo apt-get install git \
         && echo "Git install was successful." \
         || echo "Git install was unsuccessful."
 fi
