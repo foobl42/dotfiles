@@ -1,0 +1,28 @@
+{{- if or
+      (not (includeTemplate "is_command_reachable" "gcc"))
+      (not (includeTemplate "is_command_reachable" "git"))
+      (not (includeTemplate "is_command_reachable" "make")) -}}
+
+#!/bin/bash
+
+set -eufo pipefail
+
+if ! command -v apt &> /dev/null; then
+    echo "Unable to find 'apt' command. Aborting."
+    exit 1
+fi
+
+sudo apt update
+
+if ! dpkg -l build-essential &> /dev/null; then
+    sudo apt install build-essential \
+        && echo "Build-essential install was successful." \
+        || echo "Build-essential install was unsuccessful."
+fi
+
+if ! dpkg -l git &> /dev/null; then
+    sudo apt install git \
+        && echo "Git install was successful." \
+        || echo "Git install was unsuccessful."
+fi
+{{  end -}}
