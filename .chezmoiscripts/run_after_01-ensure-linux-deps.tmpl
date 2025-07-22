@@ -13,22 +13,22 @@ if ! command -v apt-get &> /dev/null; then
     exit 1
 fi
 
-sudo apt-get update
+sudo apt-get update -y && sudo apt-get dist-upgrade -y
 
 if ! dpkg -l build-essential &> /dev/null; then
-    sudo apt-get install build-essential \
+    sudo apt-get install -y build-essential \
         && echo "Build-essential install was successful." \
         || echo "Build-essential install was unsuccessful."
 fi
 
 if ! dpkg -l curl &> /dev/null; then
-    sudo apt-get install curl \
+    sudo apt-get install -y curl \
         && echo "Curl install was successful." \
         || echo "Curl install was unsuccessful."
 fi
 
 if ! dpkg -l git &> /dev/null; then
-    sudo apt-get install git \
+    sudo apt-get install -y git \
         && echo "Git install was successful." \
         || echo "Git install was unsuccessful."
 fi
