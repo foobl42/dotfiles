@@ -16,8 +16,7 @@ fi
 sudo apt-get update -y && sudo apt-get dist-upgrade -y
 
 if ! dpkg -l build-essential &> /dev/null; then
-    sudo apt-get install -y build-essential
-    if (( "$?" == 0 )); then
+    if sudo apt-get install -y build-essential; then
         echo "Install of build-essential was successful."
     else
         echo "Install of build-essential was unsuccessful."
@@ -25,8 +24,7 @@ if ! dpkg -l build-essential &> /dev/null; then
 fi
 
 if ! dpkg -l curl &> /dev/null; then
-    sudo apt-get install -y curl
-    if (( "$?" == 0 )); then
+    if sudo apt-get install -y curl; then
         echo "Install of curl was successful."
     else
         echo "Install of curl was unsuccessful."
@@ -34,8 +32,7 @@ if ! dpkg -l curl &> /dev/null; then
 fi
 
 if ! dpkg -l git &> /dev/null; then
-    sudo apt-get install -y git
-    if (( "$?" == 0 )); then
+    if sudo apt-get install -y git; then
         echo "Install of git was successful."
     else
         echo "Install of git was unsuccessful."
