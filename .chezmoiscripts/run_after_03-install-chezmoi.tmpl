@@ -1,5 +1,6 @@
 {{- if empty (findExecutable "chezmoi" (list
       "/opt/homebrew/bin"
+      (joinPath (env "HOME") ".linuxbrew" "bin")
       "/home/linuxbrew/.linuxbrew/bin"
       "/usr/local/bin")) -}}
 

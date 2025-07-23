@@ -7,9 +7,8 @@
 
 set -eufo pipefail
 
-PATH="$HOME/.local/bin"
-PATH="$PATH:/opt/homebrew/bin:/home/linuxbrew/.linuxbrew/bin"
-PATH="$PATH:/usr/local/bin:/usr/bin:/bin"
+PATH="$HOME/.local/bin:/opt/homebrew/bin:$HOME/.linuxbrew/bin"
+PATH="$PATH:/home/linuxbrew/.linuxbrew/bin:/usr/local/bin:/usr/bin:/bin"
 
 conf_dir="$HOME/.config/chezmoi"
 

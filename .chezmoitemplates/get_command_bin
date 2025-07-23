@@ -15,6 +15,7 @@
 {{-   findExecutable $command (list
         (joinPath (env "HOME") ".local" "bin")
         "/opt/homebrew/bin"
+        (joinPath (env "HOME") ".linuxbrew" "bin")
         "/home/linuxbrew/.linuxbrew/bin"
         "/usr/local/bin"
         "/usr/bin"
