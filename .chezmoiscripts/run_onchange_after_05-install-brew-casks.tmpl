@@ -1,0 +1,42 @@
+#!/bin/bash
+
+set -eufo pipefail
+
+if ! command -v brew &> /dev/null; then
+    echo "Unable to find the 'brew' command. Aborting."
+    exit 1
+fi
+
+brew update -q
+
+{{- $casks := list
+      "ghostty"
+      "pearcleaner"
+      "tailscale-app" -}}
+
+{{- if not .flags.isHeadless -}}
+{{-   $casks = concat $casks (list
+        ) -}}
+{{- end -}}
+
+{{- if .flags.isPersonalHost -}}
+{{-   $casks = concat $casks (list
+        "bambu-studio"
+        "chatgpt"
+        "curseforge"
+        "github"
+        "google-chrome"
+        "obsidian"
+        "orbstack"
+        "parallels"
+        "raspberry-pi-imager"
+        "signal"
+        "vnc-viewer") -}}
+{{- end -}}
+
+{{- $casks = sortAlpha $casks | mustUniq  }}
+
+# Casks:
+{{  join "\n" $casks | comment "#   "  }}
+
+# TODO: Install listed casks via brew.

@@ -1,0 +1,67 @@
+#!/bin/bash
+
+set -eufo pipefail
+
+if ! command -v brew &> /dev/null; then
+    echo "Unable to find the 'brew' command. Aborting."
+    exit 1
+fi
+
+brew update -q
+
+{{- $formulas := list
+      "chezmoi" -}}
+
+{{- if eq .chezmoi.os "darwin" -}}
+{{-   $formulas = concat $formulas (list
+        "age"
+        "atuin"
+        "bash"
+        "bat"
+        "croc"
+        "direnv"
+        "fastfetch"
+        "fd"
+        "fish"
+        "fzf"
+        "git"
+        "git-delta"
+        "git-lfs"
+        "helix"
+        "jless"
+        "jq"
+        "less"
+        "neovim"
+        "ripgrep"
+        "sd"
+        "tealdeer"
+        "texinfo"
+        "tree"
+        "vim"
+        "wget"
+        "zoxide"
+        "zsh") -}}
+
+{{-   if not .flags.isHeadless -}}
+{{-     $formulas = concat $formulas (list
+          ) -}}
+{{-   end  }}
+
+{{-   if not .flags.isVirtual -}}
+{{-     $formulas = mustAppend $formulas "mas" -}}
+{{-   end  }}
+
+{{-   if .flags.isPersonalHost -}}
+{{-     $formulas = concat $formulas (list
+          "ghcup"
+          "rustup"
+          "xdg-ninja") -}}
+{{-   end -}}
+{{- end -}}
+
+{{- $formulas = sortAlpha $formulas | mustUniq  }}
+
+# Formulas:
+{{  join "\n" $formulas | comment "#   "  }}
+
+# TODO: Install listed formulas via brew.
