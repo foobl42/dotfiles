@@ -11,7 +11,10 @@
 
 set -eufo pipefail
 
-rm -f $HOME/.local/bin/chezmoi &> /dev/null \
-    && echo "Removal of temporary chezmoi was successful." \
-    || echo "Removal of temporary chezmoi was unsuccessful."
+rm -f $HOME/.local/bin/chezmoi &> /dev/null
+if (( "$?" == 0 )); then
+    echo "Removal of temporary chezmoi was successful."
+else
+    echo "Removal of temporary chezmoi was unsuccessful."
+fi
 {{  end -}}

@@ -4,8 +4,13 @@ set -eufo pipefail
 
 if ! command -v brew &> /dev/null; then
     url="https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh"
-    bash -c "$(curl -fsSL $url)" && cat << EOF
+    bash -c "$(curl -fsSL $url)"
+    if (( "$?" == 0 )); then
+        cat << EOF
 Install of homebrew was successful.
 - To continue, refresh your shell and check "chezmoi status".
 EOF
+    else
+        echo "Install of homebrew was unsuccessful."
+    fi
 fi

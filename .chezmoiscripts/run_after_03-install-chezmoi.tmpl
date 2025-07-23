@@ -13,7 +13,10 @@ if ! command -v brew &> /dev/null; then
     exit 1
 fi
 
-brew install -q chezmoi \
-    && echo "Install of chezmoi was successful." \
-    || echo "Install of chezmoi was unsuccessful."
+brew install -q chezmoi
+if (( "$?" == 0 )); then
+    echo "Install of chezmoi was successful."
+else
+    echo "Install of chezmoi was unsuccessful."
+fi
 {{  end -}}
