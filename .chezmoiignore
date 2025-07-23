@@ -28,7 +28,7 @@
 # NOTE: Ignore file(s) based on current state...
 
 {{-   if not .flags.isLinuxOS  }}
-.chezmoiscripts/01-ensure-linux-deps
+.chezmoiscripts/01-install-linux-deps
 {{-   end  }}
 
 {{-   if not .flags.isMacOS  }}
@@ -36,7 +36,9 @@
 {{-   end  }}
 
 {{-   if not (or .flags.isLinuxOS .flags.isMacOS)  }}
-.chezmoiscripts/02-ensure-homebrew
+.chezmoiscripts/02-install-homebrew
+.chezmoiscripts/03-install-chezmoi
+.chezmoiscripts/04-remove-temp-chezmoi-bin
 {{-   end  }}
 
 {{-   if .flags.isHeadless  }}
@@ -51,8 +53,9 @@
 {{-   end  }}
 
 {{-   if not .flags.isAdminUser  }}
-.chezmoiscripts/01-ensure-linux-deps
-.chezmoiscripts/02-ensure-homebrew
+.chezmoiscripts/01-install-linux-deps
+.chezmoiscripts/02-install-homebrew
+.chezmoiscripts/03-install-chezmoi
 {{-   end  }}
 
 {{-   if not .flags.isPersonalUser  }}
@@ -76,7 +79,7 @@
 {{-   end  }}
 
 {{-   if includeTemplate "is_command_installed" "brew"  }}
-.chezmoiscripts/02-ensure-homebrew
+.chezmoiscripts/02-install-homebrew
 {{-   end  }}
 
 {{-   if not (includeTemplate "is_command_reachable" "atuin")  }}

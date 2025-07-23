@@ -9,7 +9,7 @@
 set -eufo pipefail
 
 if ! command -v apt-get &> /dev/null; then
-    echo "Unable to find 'apt-get' command. Aborting."
+    echo "Unable to find the 'apt-get' command. Aborting."
     exit 1
 fi
 
@@ -17,19 +17,19 @@ sudo apt-get update -y && sudo apt-get dist-upgrade -y
 
 if ! dpkg -l build-essential &> /dev/null; then
     sudo apt-get install -y build-essential \
-        && echo "Build-essential install was successful." \
-        || echo "Build-essential install was unsuccessful."
+        && echo "Install of build-essential was successful." \
+        || echo "Install of build-essential was unsuccessful."
 fi
 
 if ! dpkg -l curl &> /dev/null; then
     sudo apt-get install -y curl \
-        && echo "Curl install was successful." \
-        || echo "Curl install was unsuccessful."
+        && echo "Install of curl was successful." \
+        || echo "Install of curl was unsuccessful."
 fi
 
 if ! dpkg -l git &> /dev/null; then
     sudo apt-get install -y git \
-        && echo "Git install was successful." \
-        || echo "Git install was unsuccessful."
+        && echo "Install of git was successful." \
+        || echo "Install of git was unsuccessful."
 fi
 {{  end -}}

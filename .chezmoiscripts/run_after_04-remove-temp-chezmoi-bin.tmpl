@@ -1,0 +1,16 @@
+{{- if and
+      (not (empty (findExecutable "chezmoi"
+        (joinPath (env "HOME") ".local" "bin"))))
+      (not (empty (findExecutable "chezmoi" (list
+        "/opt/homebrew/bin"
+        "/home/linuxbrew/.linuxbrew/bin"
+        "/usr/local/bin")))) -}}
+
+#!/bin/bash
+
+set -eufo pipefail
+
+rm -f $HOME/.local/bin/chezmoi &> /dev/null \
+    && echo "Removal of temporary chezmoi was successful." \
+    || echo "Removal of temporary chezmoi was unsuccessful."
+{{  end -}}

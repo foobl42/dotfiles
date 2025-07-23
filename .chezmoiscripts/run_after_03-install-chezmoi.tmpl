@@ -1,0 +1,18 @@
+{{- if empty (findExecutable "chezmoi" (list
+      "/opt/homebrew/bin"
+      "/home/linuxbrew/.linuxbrew/bin"
+      "/usr/local/bin")) -}}
+
+#!/bin/bash
+
+set -eufo pipefail
+
+if ! command -v brew &> /dev/null; then
+    echo "Unable to find the 'brew' command. Aborting."
+    exit 1
+fi
+
+brew install -q chezmoi \
+    && echo "Install of chezmoi was successful." \
+    || echo "Install of chezmoi was unsuccessful."
+{{  end -}}
