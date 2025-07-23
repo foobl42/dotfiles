@@ -29,21 +29,31 @@
 
 {{-   if not .flags.isLinuxOS  }}
 .chezmoiscripts/01-install-linux-deps
+.chezmoiscripts/05-install-apt-packages
 {{-   end  }}
 
 {{-   if not .flags.isMacOS  }}
 .bash_sessions_disable
+.chezmoiscripts/05-install-brew-casks
+.chezmoiscripts/05-install-brew-mas-packages
 {{-   end  }}
 
 {{-   if not (or .flags.isLinuxOS .flags.isMacOS)  }}
 .chezmoiscripts/02-install-homebrew
 .chezmoiscripts/03-install-chezmoi
 .chezmoiscripts/04-remove-temp-chezmoi-bin
+.chezmoiscripts/05-install-brew-formulas
 {{-   end  }}
 
 {{-   if .flags.isHeadless  }}
+.chezmoiscripts/05-install-brew-casks
+.chezmoiscripts/05-install-brew-mas-packages
 .config/ghostty
 .config/ghostty/config
+{{-   end  }}
+
+{{-   if .flags.isVirtual  }}
+.chezmoiscripts/05-install-brew-mas-packages
 {{-   end  }}
 
 {{-   if not .flags.isPersonalHost  }}
@@ -56,9 +66,13 @@
 .chezmoiscripts/01-install-linux-deps
 .chezmoiscripts/02-install-homebrew
 .chezmoiscripts/03-install-chezmoi
+.chezmoiscripts/05-install-apt-packages
+.chezmoiscripts/05-install-brew-formulas
+.chezmoiscripts/05-install-brew-casks
 {{-   end  }}
 
 {{-   if not .flags.isPersonalUser  }}
+.chezmoiscripts/05-install-brew-mas-packages
 .chezmoiscripts/99-set-git-remote-origin-url
 .chezmoiscripts/99-update-fisher-plugins
 .config/atuin
@@ -82,6 +96,10 @@
 .chezmoiscripts/02-install-homebrew
 {{-   end  }}
 
+{{-   if not (includeTemplate "is_command_reachable" "apt-get")  }}
+.chezmoiscripts/05-install-apt-packages
+{{-   end  }}
+
 {{-   if not (includeTemplate "is_command_reachable" "atuin")  }}
 .config/atuin
 .config/atuin/config.toml
@@ -92,6 +110,12 @@
 .bash_sessions_disable
 .bashrc
 .local/state/bash
+{{-   end  }}
+
+{{-   if not (includeTemplate "is_command_reachable" "brew")  }}
+.chezmoiscripts/05-install-brew-formulas
+.chezmoiscripts/05-install-brew-casks
+.chezmoiscripts/05-install-brew-mas-packages
 {{-   end  }}
 
 {{-   if not (includeTemplate "is_command_reachable" "fish")  }}

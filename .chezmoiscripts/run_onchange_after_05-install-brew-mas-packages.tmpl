@@ -1,0 +1,46 @@
+#!/bin/bash
+
+set -eufo pipefail
+
+if ! command -v brew &> /dev/null; then
+    echo "Unable to find the 'brew' command. Aborting."
+    exit 1
+fi
+
+{{- $packages := list -}}
+
+{{- if .flags.isPersonalHost -}}
+{{- /*
+# NOTE:
+#   "937984704" is "Amphetamine"
+#   "1193539993" is "Brother iPrint&Scan"
+#   "841285201" is "Haskell"
+#   "409183694" is "Keynote"
+#   "462058435" is "Microsoft Excel"
+#   "462062816" is "Microsoft PowerPoint"
+#   "462054704" is "Microsoft Word"
+#   "409203825" is "Numbers"
+#   "409201541" is "Pages"
+#   "409907375" is "Remote Desktop"
+#   "1497506650" is "Yubico Authenticator"
+*/ -}}
+{{-   $packages = concat $packages (list
+        "937984704"
+        "1193539993"
+        "841285201"
+        "409183694"
+        "462058435"
+        "462062816"
+        "462054704"
+        "409203825"
+        "409201541"
+        "409907375"
+        "1497506650") -}}
+{{- end -}}
+
+{{- $packages = sortAlpha $packages | mustUniq  }}
+
+# Mas packages:
+{{  join "\n" $packages | comment "#   "  }}
+
+# TODO: Install listed mas packages via brew.

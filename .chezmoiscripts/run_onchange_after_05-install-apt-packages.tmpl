@@ -1,0 +1,37 @@
+#!/bin/bash
+
+set -eufo pipefail
+
+if ! command -v apt-get &> /dev/null; then
+    echo "Unable to find the 'apt-get' command. Aborting."
+    exit 1
+fi
+
+sudo apt-get update -y
+
+{{- $packages := list
+      "build-essential"
+      "curl"
+      "git" -}}
+
+{{- if not .flags.isHeadless -}}
+{{-   $packages = concat $packages (list
+        ) -}}
+{{- end  }}
+
+{{- if not .flags.isVirtual -}}
+{{-   $packages = concat $packages (list
+        ) -}}
+{{- end  }}
+
+{{- if .flags.isPersonalHost -}}
+{{-   $packages = concat $packages (list
+        ) -}}
+{{- end -}}
+
+{{- $packages = sortAlpha $packages | mustUniq  }}
+
+# Packages:
+{{  join "\n" $packages | comment "#   "  }}
+
+# TODO: Install listed packages via apt-get.
