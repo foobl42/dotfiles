@@ -1,10 +1,35 @@
-{{- if empty (findExecutable "chezmoi" (list
-      "/opt/homebrew/bin"
-      (joinPath (env "HOME") ".linuxbrew" "bin")
-      "/home/linuxbrew/.linuxbrew/bin"
-      "/usr/local/bin")) -}}
-
 #!/bin/bash
+
+# NOTE: The purpose of this script is to install chezmoi via homebrew. The idea
+# is that the current user has (potentially) installed chezmoi temporarily to
+# "$HOME/.local/bin", and installing it via homebrew is the first step towards a
+# permanent install. A subsequent script will later run to remove the temporary
+# chezmoi install if both that and the homebrew installed version are found.
+# This script is only ran if all of these conditions are met: the host is either
+# linux or darwin (macos), the current user is the designated admin, the "brew"
+# command is reachable, and the "chezmoi" command is not found (in a list of
+# known homebrew paths). The script will use the "brew" command to install
+# chezmoi.
+
+# [[- if not (or .flags.isLinuxOS .flags.isMacOS) -]]
+# [[-   returnEmpty -]]
+# [[- end -]]
+
+# [[- if not .flags.isAdminUser -]]
+# [[-   returnEmpty -]]
+# [[- end -]]
+
+# [[- if not (lookPath "brew") -]]
+# [[-   returnEmpty -]]
+# [[- end -]]
+
+# [[- $paths := list -]]
+# [[- $paths = mustAppend $paths "/opt/homebrew/bin" -]]
+# [[- $paths = mustAppend $paths "/home/linuxbrew/.linuxbrew/bin" -]]
+# [[- $paths = mustAppend $paths "/usr/local/bin" -]]
+# [[- if findExecutable "chezmoi" $paths -]]
+# [[-   returnEmpty -]]
+# [[- end -]]
 
 set -eufo pipefail
 
@@ -18,4 +43,6 @@ if brew install -q chezmoi; then
 else
     echo "Install of chezmoi was unsuccessful."
 fi
-{{  end -}}
+
+# chezmoi:template:left-delimiter="# [[" right-delimiter=]]
+# vim:set filetype=bash:

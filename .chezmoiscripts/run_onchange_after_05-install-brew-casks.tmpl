@@ -1,5 +1,25 @@
 #!/bin/bash
 
+# NOTE: The purpose of this script is to install any applicable "cask" packages
+# via the "homebrew" package manager. This script is only ran if all of these
+# conditions are met: the host OS is darwin (macos), the host is not headless,
+# the current user is the designated admin, and the "brew" command is found (in
+# the current user's search paths). The script will run initially once, to use
+# "brew" to install the specified list of "cask" package names (hard-coded
+# here). It will also run whenever this script is modified.
+
+# [[- if not (and .flags.isMacOS .flags.isAdminUser) -]]
+# [[-   returnEmpty -]]
+# [[- end -]]
+
+# [[- if .flags.isHeadless -]]
+# [[-   returnEmpty -]]
+# [[- end -]]
+
+# [[- if not (lookPath "brew") -]]
+# [[-   returnEmpty -]]
+# [[- end  ]]
+
 set -eufo pipefail
 
 if ! command -v brew &> /dev/null; then
@@ -9,34 +29,31 @@ fi
 
 brew update -q
 
-{{- $casks := list
-      "ghostty"
-      "pearcleaner"
-      "tailscale-app" -}}
+# [[- $casks := list -]]
+# [[- $casks = mustAppend $casks "ghostty" -]]
+# [[- $casks = mustAppend $casks "pearcleaner" -]]
+# [[- $casks = mustAppend $casks "tailscale-app" -]]
 
-{{- if not .flags.isHeadless -}}
-{{-   $casks = concat $casks (list
-        ) -}}
-{{- end -}}
+# [[- if .flags.isPersonalHost -]]
+# [[-   $casks = mustAppend $casks "bambu-studio" -]]
+# [[-   $casks = mustAppend $casks "chatgpt" -]]
+# [[-   $casks = mustAppend $casks "curseforge" -]]
+# [[-   $casks = mustAppend $casks "github" -]]
+# [[-   $casks = mustAppend $casks "google-chrome" -]]
+# [[-   $casks = mustAppend $casks "obsidian" -]]
+# [[-   $casks = mustAppend $casks "orbstack" -]]
+# [[-   $casks = mustAppend $casks "parallels" -]]
+# [[-   $casks = mustAppend $casks "raspberry-pi-imager" -]]
+# [[-   $casks = mustAppend $casks "signal" -]]
+# [[-   $casks = mustAppend $casks "vnc-viewer" -]]
+# [[- end -]]
 
-{{- if .flags.isPersonalHost -}}
-{{-   $casks = concat $casks (list
-        "bambu-studio"
-        "chatgpt"
-        "curseforge"
-        "github"
-        "google-chrome"
-        "obsidian"
-        "orbstack"
-        "parallels"
-        "raspberry-pi-imager"
-        "signal"
-        "vnc-viewer") -}}
-{{- end -}}
-
-{{- $casks = sortAlpha $casks | mustUniq  }}
+# [[- $casks = sortAlpha $casks | mustUniq  ]]
 
 # Casks:
-{{  join "\n" $casks | comment "#   "  }}
+# [[  join "\n" $casks | comment "#   "  ]]
 
 # TODO: Install listed casks via brew.
+
+# chezmoi:template:left-delimiter="# [[" right-delimiter=]]
+# vim:set filetype=bash:

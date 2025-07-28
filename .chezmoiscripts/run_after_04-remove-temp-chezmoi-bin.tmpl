@@ -1,13 +1,28 @@
-{{- if and
-      (not (empty (findExecutable "chezmoi"
-        (joinPath (env "HOME") ".local" "bin"))))
-      (not (empty (findExecutable "chezmoi" (list
-        "/opt/homebrew/bin"
-        (joinPath (env "HOME") ".linuxbrew" "bin")
-        "/home/linuxbrew/.linuxbrew/bin"
-        "/usr/local/bin")))) -}}
-
 #!/bin/bash
+
+# NOTE: The purpose of this script is to remove the temporary chezmoi install if
+# both that and the homebrew installed version are found. This script is only
+# ran if all of these conditions are met: the host is either linux or darwin
+# (macos), the temporary command is found (in $HOME/.local/bin), and the
+# homebrew-installed command is found. The script will remove the temporary
+# command binary.
+
+# [[- if not (or .flags.isLinuxOS .flags.isMacOS) -]]
+# [[-   returnEmpty -]]
+# [[- end -]]
+
+# [[- $path := expandenv "$HOME/.local/bin" -]]
+# [[- if not (findExecutable "chezmoi" $path) -]]
+# [[-   returnEmpty -]]
+# [[- end -]]
+
+# [[- $paths := list -]]
+# [[- $paths = mustAppend $paths "/opt/homebrew/bin" -]]
+# [[- $paths = mustAppend $paths "/home/linuxbrew/.linuxbrew/bin" -]]
+# [[- $paths = mustAppend $paths "/usr/local/bin" -]]
+# [[- if not (findExecutable "chezmoi" $paths) -]]
+# [[-   returnEmpty -]]
+# [[- end -]]
 
 set -eufo pipefail
 
@@ -16,4 +31,6 @@ if rm -f "$HOME"/.local/bin/chezmoi &> /dev/null; then
 else
     echo "Removal of temporary chezmoi was unsuccessful."
 fi
-{{  end -}}
+
+# chezmoi:template:left-delimiter="# [[" right-delimiter=]]
+# vim:set filetype=bash:

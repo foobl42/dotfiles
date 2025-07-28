@@ -1,20 +1,32 @@
-{{- /*
-
-# NOTE: This script updates the installed fish plugins via the fisher utility.
-# This script will either run or not based on the include/exclude logic found in
-# the .chezmoiignore file.
-
-*/ -}}
-
 #!/bin/bash
-{{- $file := joinPath .chezmoi.homeDir ".config" "fish" "fish_plugins"  }}
-{{- if not (empty (stat $file))  }}
-# File: fish_plugins: {{ include $file | sha256sum }}
-{{- end  }}
-# Week: {{ output "date" "+%V" }}
+
+# NOTE: The purpose of this script is to update an fish plugins managed by the
+# "fisher" utility. This script is only ran if all of these conditions are met:
+# the current user is flagged as the "personal user", and the fish shell is
+# found (in the current user's search paths). The script will run initially
+# once, to update any installed fish plugins with updates. It will also run
+# whenever this script is modified, whenever the "fish_plugins" file is
+# modified, and also every week.
+
+# [[- if not .flags.isPersonalUser -]]
+# [[-   returnEmpty -]]
+# [[- end -]]
+
+# [[- if not (lookPath "fish") -]]
+# [[-   returnEmpty -]]
+# [[- end -]]
+
+# [[- $configDir := joinPath .chezmoi.homeDir ".config" "fish" -]]
+# [[- $fisher := joinPath $configDir "functions" "fisher.fish" -]]
+# [[- $pluginsFile := joinPath $configDir "fish_plugins"  ]]
 
 set -eufo pipefail
 
-{{- $fisher := joinPath .chezmoi.homeDir ".config" "fish" "functions"
-      "fisher.fish"  }}
-fish -c "source {{ $fisher }}; fisher update"
+fish -c "source # [[ $fisher ]]; fisher update"
+
+# [[  if not (empty (stat $pluginsFile)) -]]
+# fish_plugins:# [[ include $pluginsFile | sha256sum ]]
+# [[- end  ]]
+# week_num:# [[ output "date" "+%V" -]]
+# chezmoi:template:left-delimiter="# [[" right-delimiter=]]
+# vim:set filetype=bash:

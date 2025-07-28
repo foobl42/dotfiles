@@ -1,0 +1,36 @@
+{{- /*
+# NOTE: This template, if given a command name or list of command names, will
+# look for all of the supplied commands on the current user's search path, and
+# if all are found will return true (empty otherwise).
+*/ -}}
+
+{{- $commands := . -}}
+{{- $success := true -}}
+
+{{- if empty $commands -}}
+{{-  $success = false -}}
+{{- end -}}
+
+{{- if eq (kindOf $commands) "string" -}}
+{{-   $commands = list $commands -}}
+{{- end -}}
+
+{{- if not (eq (kindOf $commands) "slice") -}}
+{{-  $success = false -}}
+{{- end -}}
+
+{{- range $commands -}}
+
+{{-   if not (eq (kindOf .) "string") -}}
+{{-    $success = false -}}
+{{-   end -}}
+
+{{-   if not (lookPath .) -}}
+{{-    $success = false -}}
+{{-   end -}}
+
+{{- end -}}
+
+{{- if $success -}}
+{{-   true -}}
+{{- end -}}

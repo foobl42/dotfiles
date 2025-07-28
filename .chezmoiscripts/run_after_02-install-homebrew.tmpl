@@ -1,0 +1,46 @@
+#!/bin/bash
+
+# NOTE: The purpose of this script is to install homebrew if determined to be
+# missing. This script is only ran if all of the conditions are met: the host is
+# either linux or darwin (macos), the current user is the designated admin, the
+# "brew" command is not found (in neither the current user's search paths, nor
+# in a specific list of search paths). The script will download the installer
+# and execute it, and remind the user to restart their shell.
+
+# [[- if not (or .flags.isLinuxOS .flags.isMacOS) -]]
+# [[-   returnEmpty -]]
+# [[- end -]]
+
+# [[- if not .flags.isAdminUser -]]
+# [[-   returnEmpty -]]
+# [[- end -]]
+
+# [[- if lookPath "brew" -]]
+# [[-   returnEmpty -]]
+# [[- end -]]
+
+# [[- if includeTemplate "is_command_installed" "brew" -]]
+# [[-   returnEmpty -]]
+# [[- end -]]
+
+set -eufo pipefail
+
+if ! command -v curl &> /dev/null; then
+    echo "Unable to find the 'curl' command. Aborting."
+    exit 1
+fi
+
+if ! command -v brew &> /dev/null; then
+    url="https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh"
+    if bash -c "$(curl -fsSL $url)"; then
+        cat << EOF
+Install of homebrew was successful.
+- To continue, refresh your shell and check "chezmoi status".
+EOF
+    else
+        echo "Install of homebrew was unsuccessful."
+    fi
+fi
+
+# chezmoi:template:left-delimiter="# [[" right-delimiter=]]
+# vim:set filetype=bash:

@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# NOTE: The purpose of this script is to continue the chezmoi initialization
+# process when further steps are required. This script is only ran if any of
+# these conditions are found: there is no "flags" data key found, encryption is
+# not fully enabled, or the config data has not been restored. The script will
+# call "chezmoi init", discarding any persistent state in order to accomplish
+# this.
+
+# NOTE: The logic to allow this script to run or not is located in the
+# .chezmoiignore file.
+
+set -eufo pipefail
+
+temp_file="$(mktemp)"
+trap 'rm -f "$temp_file"' EXIT INT TERM HUP
+chezmoi init --persistent-state="$temp_file"
+
+# vim:set filetype=bash:

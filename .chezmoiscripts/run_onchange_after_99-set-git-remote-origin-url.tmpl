@@ -1,16 +1,24 @@
-{{- /*
-
-# NOTE: This script simply sets the git remote origin url for the current user.
-# This script will either run or not based on the include/exclude logic found in
-# the .chezmoiignore file. By default, a user that uses init to download this
-# repo, will do so via https. Most users will not need to push changes. So for
-# those that need to push changes, this script should be ran.
-
-*/ -}}
-
 #!/bin/bash
+
+# NOTE: The purpose of this script is to set the git remote origin url for the
+# current user. This script is only ran if all of these conditions are met: the
+# current host is flagged as the "personal host", the current user is flagged as
+# the "personal user", and the "git" command is found (in the current user's
+# search paths). The script will run initially once to set the git remote origin
+# url. It will also run whenever this script is modified.
+
+# [[- if not (and .flags.isPersonalHost .flags.isPersonalUser) -]]
+# [[-   returnEmpty -]]
+# [[- end -]]
+
+# [[- if not (lookPath "git") -]]
+# [[-   returnEmpty -]]
+# [[- end  ]]
 
 set -eufo pipefail
 
-git -C "{{ .chezmoi.workingTree }}" remote set-url origin \
+git -C "# [[ .chezmoi.workingTree ]]" remote set-url origin \
     git@github.com:foobl42/dotfiles.git
+
+# chezmoi:template:left-delimiter="# [[" right-delimiter=]]
+# vim:set filetype=bash:

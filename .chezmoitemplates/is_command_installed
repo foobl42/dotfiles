@@ -1,11 +1,16 @@
 {{- /*
-
-# NOTE: This template uses the "get_command_bin" template to get the path to the
-# supplied command, or empty if not found; it will return true if found.
-
+# NOTE: This template, if given a command name, will look for the supplied
+# command in a specific list of well-known paths, and if found, will return true
+# (empty otherwise).
 */ -}}
 
-{{- $command := . -}}
-{{- if not (empty (includeTemplate "get_command_bin" $command)) -}}
+{{- $commandBin := includeTemplate "get_command_bin" . -}}
+{{- $success := true -}}
+
+{{- if empty $commandBin -}}
+{{-   $success = false -}}
+{{- end -}}
+
+{{- if $success -}}
 {{-   true -}}
 {{- end -}}

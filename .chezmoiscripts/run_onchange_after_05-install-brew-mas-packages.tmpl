@@ -1,5 +1,26 @@
 #!/bin/bash
 
+# NOTE: The purpose of this script is to install any applicable "mas" apps via
+# the "homebrew" package manager. This script is only ran if all of these
+# conditions are met: the host OS is darwin (macos), the host is not headless or
+# virtual, the current user is flagged as the "personal user", and the "brew"
+# and "mas" commands are both found (in the current user's search paths). The
+# script will run initially once, to use "brew" to install the specified list of
+# "mas" package names (hard-coded here). It will also run whenever this script
+# is modified.
+
+# [[- if not (and .flags.isMacOS .flags.isPersonalUser) -]]
+# [[-   returnEmpty -]]
+# [[- end -]]
+
+# [[- if or .flags.isHeadless .flags.isVirtual -]]
+# [[-   returnEmpty -]]
+# [[- end -]]
+
+# [[- if not (and (lookPath "brew") (lookPath "mas")) -]]
+# [[-   returnEmpty -]]
+# [[- end  ]]
+
 set -eufo pipefail
 
 if ! command -v brew &> /dev/null; then
@@ -7,40 +28,56 @@ if ! command -v brew &> /dev/null; then
     exit 1
 fi
 
-{{- $packages := list -}}
+if ! command -v mas &> /dev/null; then
+    echo "Unable to find the 'mas' command. Aborting."
+    exit 1
+fi
 
-{{- if .flags.isPersonalHost -}}
-{{- /*
-# NOTE:
-#   "937984704" is "Amphetamine"
-#   "1193539993" is "Brother iPrint&Scan"
-#   "841285201" is "Haskell"
-#   "409183694" is "Keynote"
-#   "462058435" is "Microsoft Excel"
-#   "462062816" is "Microsoft PowerPoint"
-#   "462054704" is "Microsoft Word"
-#   "409203825" is "Numbers"
-#   "409201541" is "Pages"
-#   "409907375" is "Remote Desktop"
-#   "1497506650" is "Yubico Authenticator"
-*/ -}}
-{{-   $packages = concat $packages (list
-        "937984704"
-        "1193539993"
-        "841285201"
-        "409183694"
-        "462058435"
-        "462062816"
-        "462054704"
-        "409203825"
-        "409201541"
-        "409907375"
-        "1497506650") -}}
-{{- end -}}
+# [[- $apps := list -]]
 
-{{- $packages = sortAlpha $packages | mustUniq  }}
+# [[- if .flags.isPersonalHost -]]
 
-# Mas packages:
-{{  join "\n" $packages | comment "#   "  }}
+# [[- /* "937984704" is "Amphetamine"           */ -]]
+# [[-   $apps = mustAppend $apps "937984704"       -]]
 
-# TODO: Install listed mas packages via brew.
+# [[- /* "1193539993" is "Brother iPrint&Scan"  */ -]]
+# [[-   $apps = mustAppend $apps "1193539993"      -]]
+
+# [[- /* "841285201" is "Haskell"               */ -]]
+# [[-   $apps = mustAppend $apps "841285201"       -]]
+
+# [[- /* "409183694" is "Keynote"               */ -]]
+# [[-   $apps = mustAppend $apps "409183694"       -]]
+
+# [[- /* "462058435" is "Microsoft Excel"       */ -]]
+# [[-   $apps = mustAppend $apps "462058435"       -]]
+
+# [[- /* "462062816" is "Microsoft PowerPoint"  */ -]]
+# [[-   $apps = mustAppend $apps "462062816"       -]]
+
+# [[- /* "462054704" is "Microsoft Word"        */ -]]
+# [[-   $apps = mustAppend $apps "462054704"       -]]
+
+# [[- /* "409203825" is "Numbers"               */ -]]
+# [[-   $apps = mustAppend $apps "409203825"       -]]
+
+# [[- /* "409201541" is "Pages"                 */ -]]
+# [[-   $apps = mustAppend $apps "409201541"       -]]
+
+# [[- /* "409907375" is "Remote Desktop"        */ -]]
+# [[-   $apps = mustAppend $apps "409907375"       -]]
+
+# [[- /* "1497506650" is "Yubico Authenticator" */ -]]
+# [[-   $apps = mustAppend $apps "1497506650"      -]]
+
+# [[- end -]]
+
+# [[- $apps = sortAlpha $apps | mustUniq  ]]
+
+# Mas apps:
+# [[  join "\n" $apps | comment "#   "  ]]
+
+# TODO: Install listed mas apps via brew.
+
+# chezmoi:template:left-delimiter="# [[" right-delimiter=]]
+# vim:set filetype=bash:

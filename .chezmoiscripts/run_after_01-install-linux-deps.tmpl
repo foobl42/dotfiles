@@ -1,10 +1,20 @@
-{{- if or
-      (not (includeTemplate "is_command_reachable" "curl"))
-      (not (includeTemplate "is_command_reachable" "gcc"))
-      (not (includeTemplate "is_command_reachable" "git"))
-      (not (includeTemplate "is_command_reachable" "make")) -}}
-
 #!/bin/bash
+
+# NOTE: The purpose of this script is to install any missing dependencies on
+# linux hosts. This script is only ran if all of these conditions are met: the
+# host OS is linux, the current user is the designated admin, and any of the
+# list of associated commands are missing (cannot be found on the current path).
+# The script will update the package manager, do a proper check to see if each
+# package is installed, and if not, install that missing package.
+
+# [[- if not (and .flags.isLinuxOS .flags.isAdminUser) -]]
+# [[-   returnEmpty -]]
+# [[- end -]]
+
+# [[- $commands := list "curl" "gcc" "git" "make" -]]
+# [[- if includeTemplate "are_all_commands_found" $commands -]]
+# [[-   returnEmpty -]]
+# [[- end -]]
 
 set -eufo pipefail
 
@@ -38,4 +48,6 @@ if ! dpkg -l git &> /dev/null; then
         echo "Install of git was unsuccessful."
     fi
 fi
-{{  end -}}
+
+# chezmoi:template:left-delimiter="# [[" right-delimiter=]]
+# vim:set filetype=bash:

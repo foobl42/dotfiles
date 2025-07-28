@@ -1,13 +1,16 @@
 {{- /*
-
-# NOTE: This template uses the "get_command_bin" template to get the path to the
-# supplied command, or empty if not found; if found, it returns the directory
-# path that the command was found in.
-
+# NOTE: This template, if given a command name, will look for the supplied
+# command in a specific list of well-known paths, and if found, will return the
+# parent directory of the first path found (empty otherwise).
 */ -}}
 
-{{- $command := . -}}
-{{- $commandBin := includeTemplate "get_command_bin" $command -}}
-{{- if not (empty $commandBin) -}}
-{{-   $commandBin | dir -}}
+{{- $commandBin := includeTemplate "get_command_bin" . -}}
+{{- $success := true -}}
+
+{{- if empty $commandBin -}}
+{{-   $success = false -}}
+{{- end -}}
+
+{{- if $success -}}
+{{-   dir $commandBin -}}
 {{- end -}}

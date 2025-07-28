@@ -1,5 +1,25 @@
 #!/bin/bash
 
+# NOTE: The purpose of this script is to install any applicable "formula"
+# packages via the "homebrew" package manager. This script is only ran if all of
+# these conditions are met: the host OS is either linux or darwin (macos), the
+# current user is the designated admin, and the "brew" command is found (in the
+# current user's search paths). The script will run initially once, to use
+# "brew" to install the specified list of "formula" package names (hard-coded
+# here). It will also run whenever this script is modified.
+
+# [[- if not (or .flags.isLinuxOS .flags.isMacOS) -]]
+# [[-   returnEmpty -]]
+# [[- end -]]
+
+# [[- if not .flags.isAdminUser -]]
+# [[-   returnEmpty -]]
+# [[- end -]]
+
+# [[- if not (lookPath "brew") -]]
+# [[-   returnEmpty -]]
+# [[- end  ]]
+
 set -eufo pipefail
 
 if ! command -v brew &> /dev/null; then
@@ -9,59 +29,51 @@ fi
 
 brew update -q
 
-{{- $formulas := list
-      "chezmoi" -}}
+# [[- $formulas := list -]]
+# [[- $formulas = mustAppend $formulas "chezmoi" -]]
 
-{{- if eq .chezmoi.os "darwin" -}}
-{{-   $formulas = concat $formulas (list
-        "age"
-        "atuin"
-        "bash"
-        "bat"
-        "croc"
-        "direnv"
-        "fastfetch"
-        "fd"
-        "fish"
-        "fzf"
-        "git"
-        "git-delta"
-        "git-lfs"
-        "helix"
-        "jless"
-        "jq"
-        "less"
-        "neovim"
-        "ripgrep"
-        "sd"
-        "tealdeer"
-        "texinfo"
-        "tree"
-        "vim"
-        "wget"
-        "zoxide"
-        "zsh") -}}
+# [[- if eq .chezmoi.os "darwin" -]]
+# [[-   $formulas = mustAppend $formulas "age" -]]
+# [[-   $formulas = mustAppend $formulas "atuin" -]]
+# [[-   $formulas = mustAppend $formulas "bash" -]]
+# [[-   $formulas = mustAppend $formulas "bat" -]]
+# [[-   $formulas = mustAppend $formulas "croc" -]]
+# [[-   $formulas = mustAppend $formulas "direnv" -]]
+# [[-   $formulas = mustAppend $formulas "fastfetch" -]]
+# [[-   $formulas = mustAppend $formulas "fd" -]]
+# [[-   $formulas = mustAppend $formulas "fish" -]]
+# [[-   $formulas = mustAppend $formulas "fzf" -]]
+# [[-   $formulas = mustAppend $formulas "git" -]]
+# [[-   $formulas = mustAppend $formulas "git-delta" -]]
+# [[-   $formulas = mustAppend $formulas "git-lfs" -]]
+# [[-   $formulas = mustAppend $formulas "helix" -]]
+# [[-   $formulas = mustAppend $formulas "jless" -]]
+# [[-   $formulas = mustAppend $formulas "jq" -]]
+# [[-   $formulas = mustAppend $formulas "less" -]]
+# [[-   $formulas = mustAppend $formulas "neovim" -]]
+# [[-   $formulas = mustAppend $formulas "ripgrep" -]]
+# [[-   $formulas = mustAppend $formulas "sd" -]]
+# [[-   $formulas = mustAppend $formulas "tealdeer" -]]
+# [[-   $formulas = mustAppend $formulas "texinfo" -]]
+# [[-   $formulas = mustAppend $formulas "tree" -]]
+# [[-   $formulas = mustAppend $formulas "vim" -]]
+# [[-   $formulas = mustAppend $formulas "wget" -]]
+# [[-   $formulas = mustAppend $formulas "zoxide" -]]
+# [[-   $formulas = mustAppend $formulas "zsh" -]]
 
-{{-   if not .flags.isHeadless -}}
-{{-     $formulas = concat $formulas (list
-          ) -}}
-{{-   end  }}
+# [[-   if .flags.isPersonalHost -]]
+# [[-     $formulas = mustAppend $formulas "ghcup" -]]
+# [[-     $formulas = mustAppend $formulas "rustup" -]]
+# [[-     $formulas = mustAppend $formulas "xdg-ninja" -]]
+# [[-   end -]]
+# [[- end -]]
 
-{{-   if not .flags.isVirtual -}}
-{{-     $formulas = mustAppend $formulas "mas" -}}
-{{-   end  }}
-
-{{-   if .flags.isPersonalHost -}}
-{{-     $formulas = concat $formulas (list
-          "ghcup"
-          "rustup"
-          "xdg-ninja") -}}
-{{-   end -}}
-{{- end -}}
-
-{{- $formulas = sortAlpha $formulas | mustUniq  }}
+# [[- $formulas = sortAlpha $formulas | mustUniq  ]]
 
 # Formulas:
-{{  join "\n" $formulas | comment "#   "  }}
+# [[  join "\n" $formulas | comment "#   "  ]]
 
 # TODO: Install listed formulas via brew.
+
+# chezmoi:template:left-delimiter="# [[" right-delimiter=]]
+# vim:set filetype=bash:

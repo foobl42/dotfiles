@@ -1,80 +1,36 @@
-{{- if not (hasKey . "flags") -}}
-# NOTE: At this stage, either there is no chezmoi config file or the existing
-# config is invalid. Ignoring all files, with the exception of the
-# "00-ensure-chezmoi-config" script, which will re-run chezmoi init, which will
-# run the pre-init hook script.
-**
-!.chezmoiscripts/00-ensure-chezmoi-config
+{{- if or
+      (not (hasKey . "flags"))
+      (empty (includeTemplate "is_encryption_enabled" .))
+      (not (hasKey .flags "hasConfigData")) -}}
 
-{{- else if empty (includeTemplate "is_encryption_enabled" .) -}}
-# NOTE: At this stage, encryption has not yet been fully enabled. Ignoring all
-# files, with the exception of the "00-ensure-chezmoi-config" script, which will
-# re-run chezmoi init, which will run the pre-init hook script.
-**
-!.chezmoiscripts/00-ensure-chezmoi-config
+# NOTE: At this stage, the chezmoi initialization is incomplete, where one or
+# more of these conditions are found: there is no "flags" data key found,
+# encryption is not fully enabled, or the config data has not been restored. All
+# files will be ignored, with the exception of the "00-ensure-chezmoi-init"
+# script, which will call "chezmoi init".
 
-{{- else if not (hasKey .flags "hasConfigData") -}}
-# NOTE: At this stage, the config data has not been restored. Ignoring all
-# files, with the exception of the "00-ensure-chezmoi-config" script, which will
-# re-run chezmoi init, which will run the pre-init hook script.
 **
-!.chezmoiscripts/00-ensure-chezmoi-config
+!.chezmoiscripts/00-ensure-chezmoi-init
 
 {{- else -}}
-# NOTE: At this stage, encryption has been fully enabled, and the config data
-# has been restored. Ignoring the "00-ensure-chezmoi-config" script.
-.chezmoiscripts/00-ensure-chezmoi-config
 
-# NOTE: Ignore file(s) based on current state...
-
-{{-   if not .flags.isLinuxOS  }}
-.chezmoiscripts/01-install-linux-deps
-.chezmoiscripts/05-install-apt-packages
-{{-   end  }}
+.chezmoiscripts/00-ensure-chezmoi-init
 
 {{-   if not .flags.isMacOS  }}
 .bash_sessions_disable
-.chezmoiscripts/05-install-brew-casks
-.chezmoiscripts/05-install-brew-mas-packages
-{{-   end  }}
-
-{{-   if not (or .flags.isLinuxOS .flags.isMacOS)  }}
-.chezmoiscripts/02-install-homebrew
-.chezmoiscripts/03-install-chezmoi
-.chezmoiscripts/04-remove-temp-chezmoi-bin
-.chezmoiscripts/05-install-brew-formulas
 {{-   end  }}
 
 {{-   if .flags.isHeadless  }}
-.chezmoiscripts/05-install-brew-casks
-.chezmoiscripts/05-install-brew-mas-packages
 .config/ghostty
 .config/ghostty/config
 {{-   end  }}
 
-{{-   if .flags.isVirtual  }}
-.chezmoiscripts/05-install-brew-mas-packages
-{{-   end  }}
-
 {{-   if not .flags.isPersonalHost  }}
-.chezmoiscripts/99-set-git-remote-origin-url
 .ssh/id_ed25519
 .ssh/id_ed25519.pub
 {{-   end  }}
 
-{{-   if not .flags.isAdminUser  }}
-.chezmoiscripts/01-install-linux-deps
-.chezmoiscripts/02-install-homebrew
-.chezmoiscripts/03-install-chezmoi
-.chezmoiscripts/05-install-apt-packages
-.chezmoiscripts/05-install-brew-formulas
-.chezmoiscripts/05-install-brew-casks
-{{-   end  }}
-
 {{-   if not .flags.isPersonalUser  }}
-.chezmoiscripts/05-install-brew-mas-packages
-.chezmoiscripts/99-set-git-remote-origin-url
-.chezmoiscripts/99-update-fisher-plugins
 .config/atuin
 .config/atuin/config.toml
 .config/fish/completions/fisher.fish
@@ -92,34 +48,19 @@
 .ssh/known_hosts.old
 {{-   end  }}
 
-{{-   if includeTemplate "is_command_installed" "brew"  }}
-.chezmoiscripts/02-install-homebrew
-{{-   end  }}
-
-{{-   if not (includeTemplate "is_command_reachable" "apt-get")  }}
-.chezmoiscripts/05-install-apt-packages
-{{-   end  }}
-
-{{-   if not (includeTemplate "is_command_reachable" "atuin")  }}
+{{-   if not (lookPath "atuin")  }}
 .config/atuin
 .config/atuin/config.toml
 {{-   end  }}
 
-{{-   if not (includeTemplate "is_command_reachable" "bash")  }}
+{{-   if not (lookPath "bash")  }}
 .bash_profile
 .bash_sessions_disable
 .bashrc
 .local/state/bash
 {{-   end  }}
 
-{{-   if not (includeTemplate "is_command_reachable" "brew")  }}
-.chezmoiscripts/05-install-brew-formulas
-.chezmoiscripts/05-install-brew-casks
-.chezmoiscripts/05-install-brew-mas-packages
-{{-   end  }}
-
-{{-   if not (includeTemplate "is_command_reachable" "fish")  }}
-.chezmoiscripts/99-update-fisher-plugins
+{{-   if not (lookPath "fish")  }}
 .config/fish
 .config/fish/completions
 .config/fish/completions/fisher.fish
@@ -132,31 +73,30 @@
 .config/fish/themes
 {{-   end  }}
 
-{{-   if not (includeTemplate "is_command_reachable" "ghostty")  }}
+{{-   if not (lookPath "ghostty")  }}
 .config/ghostty
 .config/ghostty/config
 {{-   end  }}
 
-{{-   if not (includeTemplate "is_command_reachable" "git")  }}
-.chezmoiscripts/99-set-git-remote-origin-url
+{{-   if not (lookPath "git")  }}
 .config/git
 .config/git/config
 {{-   end  }}
 
-{{-   if not (includeTemplate "is_command_reachable" "less")  }}
+{{-   if not (lookPath "less")  }}
 .local/state/less
 {{-   end  }}
 
-{{-   if not (includeTemplate "is_command_reachable" "sqlite3")  }}
+{{-   if not (lookPath "sqlite3")  }}
 .local/state/sqlite
 {{-   end  }}
 
-{{-   if not (includeTemplate "is_command_reachable" "vim")  }}
+{{-   if not (lookPath "vim")  }}
 .config/vim
 .config/vim/vimrc
 {{-   end  }}
 
-{{-   if not (includeTemplate "is_command_reachable" "zsh")  }}
+{{-   if not (lookPath "zsh")  }}
 .config/zsh
 .config/zsh/.zprofile
 .config/zsh/.zshrc
@@ -164,7 +104,6 @@
 .zshenv
 {{-   end  }}
 
-# NOTE: Always ignore these files.
 LICENSE
 README.md
-{{- end  }}
+{{  end -}}

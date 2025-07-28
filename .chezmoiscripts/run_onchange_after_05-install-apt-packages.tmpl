@@ -1,5 +1,21 @@
 #!/bin/bash
 
+# NOTE: The purpose of this script is to install any applicable packages via the
+# "apt" package manager. This script is only ran if all of these conditions are
+# met: the host OS is linux, the current user is the designated admin, and the
+# "apt-get" command is found (in the current user's search paths). The script
+# will run initially once, to use "apt-get" to install the specified list of
+# package names (hard-coded here). It will also run whenever this script is
+# modified.
+
+# [[- if not (and .flags.isLinuxOS .flags.isAdminUser) -]]
+# [[-   returnEmpty -]]
+# [[- end -]]
+
+# [[- if not (lookPath "apt_get") -]]
+# [[-   returnEmpty -]]
+# [[- end -]]
+
 set -eufo pipefail
 
 if ! command -v apt-get &> /dev/null; then
@@ -9,29 +25,17 @@ fi
 
 sudo apt-get update -y
 
-{{- $packages := list
-      "build-essential"
-      "curl"
-      "git" -}}
+# [[- $packages := list -]]
+# [[- $packages = mustAppend $packages "build-essential" -]]
+# [[- $packages = mustAppend $packages "curl" -]]
+# [[- $packages = mustAppend $packages "git" -]]
 
-{{- if not .flags.isHeadless -}}
-{{-   $packages = concat $packages (list
-        ) -}}
-{{- end  }}
-
-{{- if not .flags.isVirtual -}}
-{{-   $packages = concat $packages (list
-        ) -}}
-{{- end  }}
-
-{{- if .flags.isPersonalHost -}}
-{{-   $packages = concat $packages (list
-        ) -}}
-{{- end -}}
-
-{{- $packages = sortAlpha $packages | mustUniq  }}
+# [[- $packages = sortAlpha $packages | mustUniq  ]]
 
 # Packages:
-{{  join "\n" $packages | comment "#   "  }}
+# [[  join "\n" $packages | comment "#   "  ]]
 
 # TODO: Install listed packages via apt-get.
+
+# chezmoi:template:left-delimiter="# [[" right-delimiter=]]
+# vim:set filetype=bash:
