@@ -14,7 +14,7 @@ fi
 {{- $hasRustup := false -}}
 {{- if not (empty $brewDir)  }}
 
-{{-   $hasRustup = not (empty (includeTemplate "is_command_reachable"
+{{-   $hasRustup = not (empty (includeTemplate "is_command_installed"
         "rustup"))  }}
 {{-   if and $hasRustup .flags.isPersonalHost .flags.isPersonalUser  }}
 {{-     $cargoDir := output "bash" "-c"
@@ -36,8 +36,7 @@ export HOMEBREW_NO_ANALYTICS="1"
 export HOMEBREW_NO_ENV_HINTS="1"
 {{- end  }}
 
-{{- if and
-      (includeTemplate "is_command_reachable" "orbctl")
+{{- if and (includeTemplate "is_command_installed" "orbctl")
       .flags.isPersonalHost .flags.isPersonalUser  }}
 
 # Setup orbstack/docker environment
@@ -49,9 +48,8 @@ if command -v orbctl >/dev/null 2>&1; then
 fi
 {{- end  }}
 
-{{-   if and
-        (includeTemplate "is_command_reachable" "python3")
-        .flags.isPersonalHost .flags.isPersonalUser  }}
+{{- if and (includeTemplate "is_command_installed" "python3")
+      .flags.isPersonalHost .flags.isPersonalUser  }}
 
 # Ensure a python virtual environment
 if command -v python3 >/dev/null 2>&1; then
@@ -61,7 +59,7 @@ if command -v python3 >/dev/null 2>&1; then
     export VIRTUAL_ENV_DISABLE_PROMPT="1"
     source "$XDG_CONFIG_HOME/venv/bin/activate"
 fi
-{{-   end  }}
+{{- end  }}
 
 # Prepend user directories to path
 {{- if and $hasRustup .flags.isPersonalHost .flags.isPersonalUser  }}
@@ -82,8 +80,7 @@ export VISUAL="${EDITOR}"
 {{- if and $hasRustup .flags.isPersonalHost .flags.isPersonalUser  }}
 export CARGO_HOME="$XDG_DATA_HOME/cargo"
 {{- end  }}
-{{- if and
-      (includeTemplate "is_command_reachable" "ghcup")
+{{- if and (includeTemplate "is_command_installed" "ghcup")
       .flags.isPersonalHost .flags.isPersonalUser  }}
 export GHCUP_USE_XDG_DIRS="true"
 {{- end  }}
@@ -92,14 +89,12 @@ export LESSHISTFILE="$XDG_STATE_HOME/less/history"
 {{- if and $hasRustup .flags.isPersonalHost .flags.isPersonalUser  }}
 export RUSTUP_HOME="$XDG_DATA_HOME/rustup"
 {{- end  }}
-{{- if and
-      (includeTemplate "is_command_reachable" "sqlite3")
+{{- if and (includeTemplate "is_command_installed" "sqlite3")
       .flags.isPersonalHost .flags.isPersonalUser  }}
 export SQLITE_HISTORY="$XDG_STATE_HOME/sqlite/history"
 {{- end  }}
 
-{{- if and
-      (includeTemplate "is_command_reachable" "direnv")
+{{- if and (includeTemplate "is_command_installed" "direnv")
       .flags.isPersonalHost .flags.isPersonalUser  }}
 
 # Wire-up direnv
@@ -108,8 +103,7 @@ if command -v direnv >/dev/null 2>&1; then
 fi
 {{- end  }}
 
-{{- if and
-      (includeTemplate "is_command_reachable" "fzf")
+{{- if and (includeTemplate "is_command_installed" "fzf")
       .flags.isPersonalUser  }}
 
 # Wire-up fzf
@@ -118,8 +112,7 @@ if command -v fzf >/dev/null 2>&1; then
 fi
 {{- end  }}
 
-{{- if and
-      (includeTemplate "is_command_reachable" "zoxide")
+{{- if and (includeTemplate "is_command_installed" "zoxide")
       .flags.isPersonalUser  }}
 
 # Wire-up zoxide
