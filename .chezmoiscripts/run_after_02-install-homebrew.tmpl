@@ -8,19 +8,19 @@
 # and execute it, and remind the user to restart their shell.
 
 # [[- if not (or .flags.isLinuxOS .flags.isMacOS) -]]
-# [[-   returnEmpty -]]
+# [[-   abortEmpty -]]
 # [[- end -]]
 
 # [[- if not .flags.isAdminUser -]]
-# [[-   returnEmpty -]]
+# [[-   abortEmpty -]]
 # [[- end -]]
 
 # [[- if lookPath "brew" -]]
-# [[-   returnEmpty -]]
+# [[-   abortEmpty -]]
 # [[- end -]]
 
 # [[- if includeTemplate "is_command_installed" "brew" -]]
-# [[-   returnEmpty -]]
+# [[-   abortEmpty -]]
 # [[- end -]]
 
 set -eufo pipefail

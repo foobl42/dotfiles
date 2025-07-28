@@ -8,12 +8,12 @@
 # package is installed, and if not, install that missing package.
 
 # [[- if not (and .flags.isLinuxOS .flags.isAdminUser) -]]
-# [[-   returnEmpty -]]
+# [[-   abortEmpty -]]
 # [[- end -]]
 
 # [[- $commands := list "curl" "gcc" "git" "make" -]]
 # [[- if includeTemplate "are_all_commands_found" $commands -]]
-# [[-   returnEmpty -]]
+# [[-   abortEmpty -]]
 # [[- end -]]
 
 set -eufo pipefail

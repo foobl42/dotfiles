@@ -9,11 +9,11 @@
 # modified, and also every week.
 
 # [[- if not .flags.isPersonalUser -]]
-# [[-   returnEmpty -]]
+# [[-   abortEmpty -]]
 # [[- end -]]
 
 # [[- if not (lookPath "fish") -]]
-# [[-   returnEmpty -]]
+# [[-   abortEmpty -]]
 # [[- end -]]
 
 # [[- $configDir := joinPath .chezmoi.homeDir ".config" "fish" -]]

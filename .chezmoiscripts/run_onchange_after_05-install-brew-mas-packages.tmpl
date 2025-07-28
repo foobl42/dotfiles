@@ -10,15 +10,15 @@
 # is modified.
 
 # [[- if not (and .flags.isMacOS .flags.isPersonalUser) -]]
-# [[-   returnEmpty -]]
+# [[-   abortEmpty -]]
 # [[- end -]]
 
 # [[- if or .flags.isHeadless .flags.isVirtual -]]
-# [[-   returnEmpty -]]
+# [[-   abortEmpty -]]
 # [[- end -]]
 
 # [[- if not (and (lookPath "brew") (lookPath "mas")) -]]
-# [[-   returnEmpty -]]
+# [[-   abortEmpty -]]
 # [[- end  ]]
 
 set -eufo pipefail

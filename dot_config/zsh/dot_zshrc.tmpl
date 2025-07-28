@@ -1,4 +1,4 @@
-{{- $hasRustup := not (empty (includeTemplate "is_command_reachable"
+{{- $hasRustup := not (empty (includeTemplate "is_command_installed"
       "rustup")) -}}
 
 # Exit unless interactive
@@ -14,8 +14,7 @@ export VISUAL="$EDITOR"
 {{- if and $hasRustup .flags.isPersonalHost .flags.isPersonalUser  }}
 export CARGO_HOME="$XDG_DATA_HOME/cargo"
 {{- end  }}
-{{- if and
-      (includeTemplate "is_command_reachable" "ghcup")
+{{- if and (includeTemplate "is_command_installed" "ghcup")
       .flags.isPersonalHost .flags.isPersonalUser  }}
 export GHCUP_USE_XDG_DIRS="true"
 {{- end  }}
@@ -24,14 +23,12 @@ export LESSHISTFILE="$XDG_STATE_HOME/less/history"
 {{- if and $hasRustup .flags.isPersonalHost .flags.isPersonalUser  }}
 export RUSTUP_HOME="$XDG_DATA_HOME/rustup"
 {{- end  }}
-{{- if and
-      (includeTemplate "is_command_reachable" "sqlite3")
+{{- if and (includeTemplate "is_command_installed" "sqlite3")
       .flags.isPersonalHost .flags.isPersonalUser  }}
 export SQLITE_HISTORY="$XDG_STATE_HOME/sqlite/history"
 {{- end  }}
 
-{{- if and
-      (includeTemplate "is_command_reachable" "direnv")
+{{- if and (includeTemplate "is_command_installed" "direnv")
       .flags.isPersonalHost .flags.isPersonalUser  }}
 
 # Wire-up direnv
@@ -40,8 +37,7 @@ if command -v direnv >/dev/null 2>&1; then
 fi
 {{- end  }}
 
-{{- if and
-      (includeTemplate "is_command_reachable" "fzf")
+{{- if and (includeTemplate "is_command_installed" "fzf")
       .flags.isPersonalUser  }}
 
 # Wire-up fzf
@@ -50,8 +46,7 @@ if command -v fzf >/dev/null 2>&1; then
 fi
 {{- end  }}
 
-{{- if and
-      (includeTemplate "is_command_reachable" "zoxide")
+{{- if and (includeTemplate "is_command_installed" "zoxide")
       .flags.isPersonalUser  }}
 
 # Wire-up zoxide

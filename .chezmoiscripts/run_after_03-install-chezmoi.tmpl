@@ -12,15 +12,15 @@
 # chezmoi.
 
 # [[- if not (or .flags.isLinuxOS .flags.isMacOS) -]]
-# [[-   returnEmpty -]]
+# [[-   abortEmpty -]]
 # [[- end -]]
 
 # [[- if not .flags.isAdminUser -]]
-# [[-   returnEmpty -]]
+# [[-   abortEmpty -]]
 # [[- end -]]
 
 # [[- if not (lookPath "brew") -]]
-# [[-   returnEmpty -]]
+# [[-   abortEmpty -]]
 # [[- end -]]
 
 # [[- $paths := list -]]
@@ -28,7 +28,7 @@
 # [[- $paths = mustAppend $paths "/home/linuxbrew/.linuxbrew/bin" -]]
 # [[- $paths = mustAppend $paths "/usr/local/bin" -]]
 # [[- if findExecutable "chezmoi" $paths -]]
-# [[-   returnEmpty -]]
+# [[-   abortEmpty -]]
 # [[- end -]]
 
 set -eufo pipefail

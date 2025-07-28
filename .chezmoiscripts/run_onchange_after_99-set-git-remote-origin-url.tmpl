@@ -8,11 +8,11 @@
 # url. It will also run whenever this script is modified.
 
 # [[- if not (and .flags.isPersonalHost .flags.isPersonalUser) -]]
-# [[-   returnEmpty -]]
+# [[-   abortEmpty -]]
 # [[- end -]]
 
 # [[- if not (lookPath "git") -]]
-# [[-   returnEmpty -]]
+# [[-   abortEmpty -]]
 # [[- end  ]]
 
 set -eufo pipefail

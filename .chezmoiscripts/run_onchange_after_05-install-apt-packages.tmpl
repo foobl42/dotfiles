@@ -9,11 +9,11 @@
 # modified.
 
 # [[- if not (and .flags.isLinuxOS .flags.isAdminUser) -]]
-# [[-   returnEmpty -]]
+# [[-   abortEmpty -]]
 # [[- end -]]
 
 # [[- if not (lookPath "apt_get") -]]
-# [[-   returnEmpty -]]
+# [[-   abortEmpty -]]
 # [[- end -]]
 
 set -eufo pipefail

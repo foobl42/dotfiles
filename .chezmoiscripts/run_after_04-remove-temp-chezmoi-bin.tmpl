@@ -8,12 +8,12 @@
 # command binary.
 
 # [[- if not (or .flags.isLinuxOS .flags.isMacOS) -]]
-# [[-   returnEmpty -]]
+# [[-   abortEmpty -]]
 # [[- end -]]
 
 # [[- $path := expandenv "$HOME/.local/bin" -]]
 # [[- if not (findExecutable "chezmoi" $path) -]]
-# [[-   returnEmpty -]]
+# [[-   abortEmpty -]]
 # [[- end -]]
 
 # [[- $paths := list -]]
@@ -21,7 +21,7 @@
 # [[- $paths = mustAppend $paths "/home/linuxbrew/.linuxbrew/bin" -]]
 # [[- $paths = mustAppend $paths "/usr/local/bin" -]]
 # [[- if not (findExecutable "chezmoi" $paths) -]]
-# [[-   returnEmpty -]]
+# [[-   abortEmpty -]]
 # [[- end -]]
 
 set -eufo pipefail

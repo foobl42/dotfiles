@@ -5,7 +5,7 @@ typeset -U PATH path
 {{- $hasRustup := false -}}
 {{- if not (empty $brewDir)  }}
 
-{{-   $hasRustup = not (empty (includeTemplate "is_command_reachable"
+{{-   $hasRustup = not (empty (includeTemplate "is_command_installed"
         "rustup"))  }}
 {{-   if and $hasRustup .flags.isPersonalHost .flags.isPersonalUser  }}
 {{-     $cargoDir := output "bash" "-c"
@@ -24,9 +24,7 @@ export HOMEBREW_NO_ANALYTICS=1
 export HOMEBREW_NO_ENV_HINTS=1
 {{- end  }}
 
-
-{{- if and
-      (includeTemplate "is_command_reachable" "orbctl")
+{{- if and (includeTemplate "is_command_installed" "orbctl")
       .flags.isPersonalHost .flags.isPersonalUser  }}
 
 # Setup orbstack/docker environment
@@ -38,9 +36,8 @@ if command -v orbctl >/dev/null 2>&1; then
 fi
 {{- end  }}
 
-{{-   if and
-        (includeTemplate "is_command_reachable" "python3")
-        .flags.isPersonalHost .flags.isPersonalUser  }}
+{{- if and (includeTemplate "is_command_installed" "python3")
+      .flags.isPersonalHost .flags.isPersonalUser  }}
 
 # Ensure a python virtual environment
 if command -v python3 >/dev/null 2>&1; then
@@ -50,7 +47,7 @@ if command -v python3 >/dev/null 2>&1; then
     export VIRTUAL_ENV_DISABLE_PROMPT="1"
     source "$XDG_CONFIG_HOME/venv/bin/activate"
 fi
-{{-   end  }}
+{{- end  }}
 
 # Prepend user directories to path
 {{- if and $hasRustup .flags.isPersonalHost .flags.isPersonalUser  }}

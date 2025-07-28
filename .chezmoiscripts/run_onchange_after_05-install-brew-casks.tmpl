@@ -9,15 +9,15 @@
 # here). It will also run whenever this script is modified.
 
 # [[- if not (and .flags.isMacOS .flags.isAdminUser) -]]
-# [[-   returnEmpty -]]
+# [[-   abortEmpty -]]
 # [[- end -]]
 
 # [[- if .flags.isHeadless -]]
-# [[-   returnEmpty -]]
+# [[-   abortEmpty -]]
 # [[- end -]]
 
 # [[- if not (lookPath "brew") -]]
-# [[-   returnEmpty -]]
+# [[-   abortEmpty -]]
 # [[- end  ]]
 
 set -eufo pipefail
