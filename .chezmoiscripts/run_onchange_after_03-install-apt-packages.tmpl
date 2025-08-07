@@ -1,12 +1,12 @@
 #!/bin/bash
 
-# NOTE: The purpose of this script is to install any applicable packages via the
-# "apt" package manager. This script is only ran if all of these conditions are
-# met: the host OS is linux, the current user is the designated admin, and the
-# "apt-get" command is found (in the current user's search paths). The script
-# will run initially once, to use "apt-get" to install the specified list of
-# package names (hard-coded here). It will also run whenever this script is
-# modified.
+# NOTE: The purpose of this script is to install any applicable packages via
+# the "apt" package manager. This script is only ran if all of these conditions
+# are met: the host OS is linux, the current user is the designated admin, and
+# the "apt-get" command is found (in the current user's search paths). The
+# script will run initially once, to use "apt-get" to install the specified
+# list of package names (hard-coded here). It will also run whenever this
+# script is modified.
 
 # [[- if not (and .flags.isLinuxOS .flags.isAdminUser) -]]
 # [[-   abortEmpty -]]

@@ -1,11 +1,11 @@
 #!/bin/bash
 
 # NOTE: The purpose of this script is to install homebrew if determined to be
-# missing. This script is only ran if all of the conditions are met: the host is
-# either linux or darwin (macos), the current user is the designated admin, the
-# "brew" command is not found (in neither the current user's search paths, nor
-# in a specific list of search paths). The script will download the installer
-# and execute it, and remind the user to restart their shell.
+# missing. This script is only ran if all of the conditions are met: the host
+# is either linux or darwin (macos), the current user is the designated admin,
+# the "brew" command is not found (in neither the current user's search paths,
+# nor in a specific list of search paths). The script will download the
+# installer and execute it, and remind the user to restart their shell.
 
 # [[- if not (or .flags.isLinuxOS .flags.isMacOS) -]]
 # [[-   abortEmpty -]]

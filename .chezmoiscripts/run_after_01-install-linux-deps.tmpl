@@ -3,9 +3,9 @@
 # NOTE: The purpose of this script is to install any missing dependencies on
 # linux hosts. This script is only ran if all of these conditions are met: the
 # host OS is linux, the current user is the designated admin, and any of the
-# list of associated commands are missing (cannot be found on the current path).
-# The script will update the package manager, do a proper check to see if each
-# package is installed, and if not, install that missing package.
+# list of associated commands are missing (cannot be found on the current
+# path). The script will update the package manager, do a proper check to see
+# if each package is installed, and if not, install that missing package.
 
 # [[- if not (and .flags.isLinuxOS .flags.isAdminUser) -]]
 # [[-   abortEmpty -]]
