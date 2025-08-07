@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# NOTE: The purpose of this script is to set the git remote origin url for the
+# current user. This script is only ran if all of these conditions are met: the
+# current host is flagged as the "personal host", the current user is flagged as
+# the "personal user", and the git remote origin url is not currently set. The
+# script will run initially once to set the git remote origin url. It will also
+# run whenever this script is modified, or whenever the expected git remote
+# origin url is not currently set.
+
+# [[- if not (and .flags.isPersonalHost .flags.isPersonalUser) -]]
+# [[-   abortEmpty -]]
+# [[- end -]]
+
+# [[- $preCmd := list "git" "--" "-C" .chezmoi.workingTree "remote" -]]
+# [[- $getCmd := list "get-url" "origin" | concat $preCmd -]]
+# [[- $url := "git@github.com:foobl42/dotfiles.git" -]]
+
+# [[- if eq (outputList "chezmoi" $getCmd | trim) $url -]]
+# [[-   abortEmpty -]]
+# [[- end  ]]
+
+set -eufo pipefail
+
+chezmoi # [[ list "set-url" "origin" $url | concat $preCmd | join " " ]]
+
+# chezmoi:template:left-delimiter="# [[" right-delimiter=]]
+# vim:set filetype=bash:
