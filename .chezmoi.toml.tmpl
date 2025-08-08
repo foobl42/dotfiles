@@ -6,8 +6,7 @@
 {{- $hasIdentityFile := not (empty (stat $identityFile)) -}}
 {{- $publicKey := "" -}}
 {{- if $hasIdentityFile -}}
-{{-   $publicKey = output
-        (joinPath $scriptsDir "extract-age-public-key") -}}
+{{-   $publicKey = output "age-keygen" "-y" $identityFile | trim -}}
 {{- end -}}
 {{- $hasPublicKey := not (empty $publicKey) -}}
 {{- $configData := "" -}}
